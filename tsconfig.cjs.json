@@ -3,5 +3,9 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "dist/cjs"
-  }
+  },
+  "exclude": [
+    "./src/**/*.spec.ts",
+    "./src/test/*.ts"
+  ]
 }
