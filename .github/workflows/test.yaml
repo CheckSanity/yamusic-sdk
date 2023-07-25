@@ -23,4 +23,6 @@ jobs:
       - name: Run ESLint
         run: npm run lint
       - name: Run tests
+        env:
+          INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN }}
         run: npm run test
