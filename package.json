@@ -5,8 +5,11 @@
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",
   "types": "dist/mjs/index.d.ts",
-  "author": "",
-  "private": true,
+  "author": {
+    "name": "Gary Bezruchko",
+    "email": "gary@bezruchko.com",
+    "url": "https://sanity.cc/"
+  },
   "license": "MIT",
   "scripts": {
     "test": "jest",
