@@ -59,8 +59,11 @@ export class YaMusicSDK {
   public async makeRequest<R>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     url: string,
-    body?: unknown,
-    contentType?: string,
+    args?: {
+      formData?: FormData;
+      body?: unknown;
+      contentType?: string;
+    },
   ): Promise<R> {
     const token = this.configuration.token;
     const fullUrl = this.configuration.url + url;
@@ -69,14 +72,21 @@ export class YaMusicSDK {
       method: method,
       headers: {
         Authorization: `OAuth ${token}`,
-        'Content-Type': contentType ?? 'application/json',
       },
-      body: body
-        ? typeof body === 'string'
-          ? body
-          : JSON.stringify(body)
-        : undefined,
+      body:
+        args?.formData ??
+        (args?.body
+          ? typeof args?.body === 'string'
+            ? args?.body
+            : JSON.stringify(args?.body)
+          : undefined),
     };
+    if (args?.formData === undefined) {
+      opts.headers = {
+        ...opts.headers,
+        'Content-type': args?.contentType ?? 'application/json',
+      };
+    }
 
     const result = await this.configuration.fetch(fullUrl, opts);
 

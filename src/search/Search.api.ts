@@ -1,5 +1,5 @@
 import { BaseApi } from '../BaseApi';
-import { Search, SearchType } from './Search.types';
+import { Search, SearchSuggest, SearchType } from './Search.types';
 import * as querystring from 'querystring';
 
 export class SearchApi extends BaseApi {
@@ -11,5 +11,9 @@ export class SearchApi extends BaseApi {
     playlistInBest?: boolean;
   }): Promise<Search> {
     return this.getRequest<Search>(`search?${querystring.stringify(args)}`);
+  }
+
+  public searchSuggest(part: string): Promise<SearchSuggest> {
+    return this.getRequest<SearchSuggest>(`search/suggest?part=${part}`);
   }
 }

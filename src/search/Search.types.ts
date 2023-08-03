@@ -32,3 +32,19 @@ export type SearchType =
   //| 'user'
   //| 'podcast'
   | string;
+
+export type SearchSuggest = {
+  /**
+   * Best match
+   */
+  best: {
+    type: SearchType;
+    text: string;
+    result: Artist | Playlist | Track | BaseAlbum;
+  };
+
+  /**
+   * List of suggestion
+   */
+  suggestions: string[];
+};

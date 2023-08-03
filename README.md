@@ -88,10 +88,11 @@ just without the Type information.
 
 ## Running the tests
 
-To run the tests, you need to have a Yandex Music access token.
+To run the tests, you need to have a Yandex Music access token and get your uid.
 
 You will need to add the following environment variables that can be placed in `.env` file:
 
 - `INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN`
+- `INTEGRATION_TESTS_YANDEX_MUSIC_UID`
 
 Now you can run the tests with `yarn run test`.
