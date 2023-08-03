@@ -1,4 +1,4 @@
-import { Cover, CustomWave, Region } from '../common/Common.types';
+import { Cover, CustomWave, Pager, Region } from '../common/Common.types';
 import { BaseAlbum } from '../albums/Albums.types';
 import { Track } from '../tracks/Track.types';
 
@@ -174,3 +174,13 @@ export type ArtistVideo = {
 };
 
 export type ArtistVideoProvider = 'yandex' | string;
+
+export type ArtistTracks = {
+  pager: Pager;
+  tracks: Track[];
+};
+
+export type ArtistAlbums = {
+  pager: Pager;
+  albums: BaseAlbum[];
+};

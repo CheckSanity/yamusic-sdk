@@ -79,7 +79,7 @@ export type Playlist = {
    *
    * @example 'private' or 'public'
    */
-  visibility: string;
+  visibility: PlaylistVisibility;
 
   /**
    * Is collective playlist?
@@ -271,3 +271,5 @@ export type PlaylistTag = {
    */
   value: string;
 };
+
+export type PlaylistVisibility = 'public' | 'private';

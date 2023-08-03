@@ -7,6 +7,17 @@ import { PlaylistsApi } from './playlists/Playlists.api';
 import { TracksApi } from './tracks/Tracks.api';
 import { UsersApi } from './users/Users.api';
 import { SearchApi } from './search/Search.api';
+import { GenresApi } from './genres/Genres.api';
+
+export type * from './account/Account.types';
+export type * from './albums/Albums.types';
+export type * from './artists/Artists.types';
+export type * from './common/Common.types';
+export type * from './genres/Genres.types';
+export type * from './playlists/Playlists.types';
+export type * from './search/Search.types';
+export type * from './tracks/Track.types';
+export type * from './users/User.types';
 
 export type SdkConfig = {
   url: string;
@@ -22,6 +33,7 @@ export class YaMusicSDK {
   public tracks: TracksApi;
   public users: UsersApi;
   public search: SearchApi;
+  public genres: GenresApi;
 
   private configuration: SdkConfig;
   private validator = new DefaultResponseValidator();
@@ -37,6 +49,7 @@ export class YaMusicSDK {
     this.tracks = new TracksApi(this);
     this.users = new UsersApi(this);
     this.search = new SearchApi(this);
+    this.genres = new GenresApi(this);
   }
 
   public static create(config?: Partial<SdkConfig>): YaMusicSDK {
@@ -46,8 +59,11 @@ export class YaMusicSDK {
   public async makeRequest<R>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     url: string,
-    body?: unknown,
-    contentType?: string,
+    args?: {
+      formData?: FormData;
+      body?: unknown;
+      contentType?: string;
+    },
   ): Promise<R> {
     const token = this.configuration.token;
     const fullUrl = this.configuration.url + url;
@@ -56,14 +72,21 @@ export class YaMusicSDK {
       method: method,
       headers: {
         Authorization: `OAuth ${token}`,
-        'Content-Type': contentType ?? 'application/json',
       },
-      body: body
-        ? typeof body === 'string'
-          ? body
-          : JSON.stringify(body)
-        : undefined,
+      body:
+        args?.formData ??
+        (args?.body
+          ? typeof args?.body === 'string'
+            ? args?.body
+            : JSON.stringify(args?.body)
+          : undefined),
     };
+    if (args?.formData === undefined) {
+      opts.headers = {
+        ...opts.headers,
+        'Content-type': args?.contentType ?? 'application/json',
+      };
+    }
 
     const result = await this.configuration.fetch(fullUrl, opts);
 

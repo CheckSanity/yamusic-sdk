@@ -25,4 +25,5 @@ jobs:
       - name: Run tests
         env:
           INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN }}
+          INTEGRATION_TESTS_YANDEX_MUSIC_UID: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_UID }}
         run: npm run test

@@ -12,6 +12,8 @@ export class AccountApi extends BaseApi {
 
   // TODO Currently fields not updating, but modified data updates
   public async setSettings(body: unknown): Promise<AccountSettings> {
-    return this.postRequest<AccountSettings, unknown>(`account/settings`, body);
+    return this.postRequest<AccountSettings, unknown>(`account/settings`, {
+      body: body,
+    });
   }
 }

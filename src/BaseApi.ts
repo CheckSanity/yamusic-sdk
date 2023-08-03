@@ -9,24 +9,34 @@ export class BaseApi {
 
   protected async postRequest<R, B = unknown>(
     url: string,
-    body?: B,
-    contentType: string | undefined = undefined,
+    args?: {
+      body?: B;
+      formData?: FormData;
+      contentType?: string;
+    },
   ): Promise<R> {
-    return await this.sdk.makeRequest<R>('POST', url, body, contentType);
+    return await this.sdk.makeRequest<R>('POST', url, args);
   }
 
   protected async putRequest<R, B = unknown>(
     url: string,
-    body?: B,
-    contentType: string | undefined = undefined,
+    args?: {
+      body?: B;
+      formData?: FormData;
+      contentType?: string;
+    },
   ): Promise<R> {
-    return await this.sdk.makeRequest<R>('PUT', url, body, contentType);
+    return await this.sdk.makeRequest<R>('PUT', url, args);
   }
 
   protected async deleteRequest<R, B = unknown>(
     url: string,
-    body?: B,
+    args?: {
+      body?: B;
+      formData?: FormData;
+      contentType?: string;
+    },
   ): Promise<R> {
-    return await this.sdk.makeRequest<R>('DELETE', url, body);
+    return await this.sdk.makeRequest<R>('DELETE', url, args);
   }
 }
