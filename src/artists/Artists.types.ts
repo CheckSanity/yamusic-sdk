@@ -1,4 +1,4 @@
-import { Cover, CustomWave } from '../common/Common.types';
+import { Cover, CustomWave, Region } from '../common/Common.types';
 import { BaseAlbum } from '../albums/Albums.types';
 import { Track } from '../tracks/Track.types';
 
@@ -8,7 +8,7 @@ export type BaseArtist = {
    *
    * @example '3121'
    */
-  id: string;
+  id: number;
 
   /**
    * Artist name
@@ -86,6 +86,11 @@ export type Artist = BaseArtist & {
    * Database aliases
    */
   dbAliases?: string[];
+
+  /**
+   * TODO Regions
+   */
+  regions: Region[];
 };
 
 export type ArtistDetailed = {

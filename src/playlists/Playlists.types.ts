@@ -1,4 +1,4 @@
-import { Cover, CustomWave } from '../common/Common.types';
+import { Cover, CustomWave, Region } from '../common/Common.types';
 import { Track } from '../tracks/Track.types';
 
 export type Playlist = {
@@ -175,9 +175,14 @@ export type Playlist = {
    * Playlist custom wave
    */
   customWave: CustomWave;
+
+  /**
+   * TODO Regions
+   */
+  regions: Region[];
 };
 
-export type PlaylistDetailed = {
+export type PlaylistWithTracks = {
   tracks: PlaylistTrack[];
 } & Playlist;
 

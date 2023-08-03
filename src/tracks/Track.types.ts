@@ -1,5 +1,6 @@
 import { BaseArtist } from '../artists/Artists.types';
 import { AlbumWithTrackPosition } from '../albums/Albums.types';
+import { Region } from '../common/Common.types';
 
 export type Track = {
   /**
@@ -105,7 +106,7 @@ export type Track = {
   /**
    * Is track lyrics available?
    */
-  lyricsAvailable: true;
+  lyricsAvailable: boolean;
 
   /**
    * Track lyrics info
@@ -131,6 +132,11 @@ export type Track = {
    * If present, then probably fields not available
    */
   error?: string;
+
+  /**
+   * TODO regions
+   */
+  regions: Region[];
 };
 
 export type SimilarTracks = {

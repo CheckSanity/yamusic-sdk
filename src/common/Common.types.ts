@@ -70,3 +70,5 @@ export type Pager = {
   page: number;
   perPage: number;
 };
+
+export type Region = 'RUSSIA' | 'RUSSIA_PREMIUM' | string;
