@@ -177,7 +177,7 @@ export type Playlist = {
   customWave: CustomWave;
 };
 
-export type PlaylistDetailed = {
+export type PlaylistWithTracks = {
   tracks: PlaylistTrack[];
 } & Playlist;
 
