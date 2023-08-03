@@ -8,7 +8,7 @@ import {
 
 export class PlaylistsApi extends BaseApi {
   public createPlaylist(
-    uid: number,
+    uid: number | string,
     title: string,
     visibility: PlaylistVisibility,
   ) {
@@ -21,12 +21,12 @@ export class PlaylistsApi extends BaseApi {
     });
   }
 
-  public deletePlaylist(uid: number, kind: number): Promise<string> {
+  public deletePlaylist(uid: number | string, kind: number): Promise<string> {
     return this.postRequest(`users/${uid}/playlists/${kind}/delete`);
   }
 
   public updatePlaylistName(
-    uid: number,
+    uid: number | string,
     kind: number,
     newName: string,
   ): Promise<Playlist> {
@@ -39,7 +39,7 @@ export class PlaylistsApi extends BaseApi {
   }
 
   public updatePlaylistVisibility(
-    uid: number,
+    uid: number | string,
     kind: number,
     newVisibility: PlaylistVisibility,
   ): Promise<Playlist> {
@@ -54,14 +54,17 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public playlist(uid: number, kind: number): Promise<PlaylistWithTracks> {
+  public playlist(
+    uid: number | string,
+    kind: number,
+  ): Promise<PlaylistWithTracks> {
     return this.getRequest<PlaylistWithTracks>(
       `users/${uid}/playlists/${kind}`,
     );
   }
 
   public recommendations(
-    uid: number,
+    uid: number | string,
     kind: number,
   ): Promise<PlaylistRecommendations> {
     return this.getRequest<PlaylistRecommendations>(

@@ -8,9 +8,13 @@ describe('Playlists API', () => {
   let sdk: YaMusicSDK;
   let fetchSpy: FetchApiSpy;
 
-  const uid: number = Number.parseInt(
-    process.env.INTEGRATION_TESTS_YANDEX_MUSIC_UID ?? '',
-  );
+  const uid = process.env.INTEGRATION_TESTS_YANDEX_MUSIC_UID;
+
+  if (!uid) {
+    throw new Error(
+      'No client user ID provided. Please provide a valid user ID in the /.env file as: INTEGRATION_TESTS_YANDEX_MUSIC_UID',
+    );
+  }
 
   beforeEach(() => {
     [sdk, fetchSpy] = buildIntegrationTestSdkInstance();
