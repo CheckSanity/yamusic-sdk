@@ -6,6 +6,7 @@ import { ArtistsApi } from './artists/Artists.api';
 import { PlaylistsApi } from './playlists/Playlists.api';
 import { TracksApi } from './tracks/Tracks.api';
 import { UsersApi } from './users/Users.api';
+import { SearchApi } from './search/Search.api';
 
 export type SdkConfig = {
   url: string;
@@ -20,6 +21,7 @@ export class YaMusicSDK {
   public playlists: PlaylistsApi;
   public tracks: TracksApi;
   public users: UsersApi;
+  public search: SearchApi;
 
   private configuration: SdkConfig;
   private validator = new DefaultResponseValidator();
@@ -34,6 +36,7 @@ export class YaMusicSDK {
     this.playlists = new PlaylistsApi(this);
     this.tracks = new TracksApi(this);
     this.users = new UsersApi(this);
+    this.search = new SearchApi(this);
   }
 
   public static create(config?: Partial<SdkConfig>): YaMusicSDK {

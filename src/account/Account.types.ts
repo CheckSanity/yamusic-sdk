@@ -166,6 +166,11 @@ export type AccountStatus = {
    */
   userhash?: string;
 
+  /**
+   * User permissions
+   */
+  permissions?: Permissions;
+
   // TODO Other
 };
 
