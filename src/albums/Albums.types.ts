@@ -127,7 +127,7 @@ export type AlbumWithTrackPosition = BaseAlbum & {
   /**
    * Track position
    */
-  trackPosition: AlbumTrackPosition;
+  trackPosition?: AlbumTrackPosition;
 };
 
 export type AlbumWithTracks = BaseAlbum & {
