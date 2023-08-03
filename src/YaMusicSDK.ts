@@ -8,6 +8,15 @@ import { TracksApi } from './tracks/Tracks.api';
 import { UsersApi } from './users/Users.api';
 import { SearchApi } from './search/Search.api';
 
+export type * from './account/Account.types';
+export type * from './albums/Albums.types';
+export type * from './artists/Artists.types';
+export type * from './common/Common.types';
+export type * from './playlists/Playlists.types';
+export type * from './search/Search.types';
+export type * from './tracks/Track.types';
+export type * from './users/User.types';
+
 export type SdkConfig = {
   url: string;
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;

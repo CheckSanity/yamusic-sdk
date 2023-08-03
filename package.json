@@ -7,7 +7,7 @@
   "umd:main": "dist/yamusic-sdk.umd.js",
   "module": "dist/yamusic-sdk.mjs",
   "exports": {
-    "types": "./dist/yamusic-sdk.d.ts",
+    "types": "./dist/YaMusicSDK.d.ts",
     "require": "./dist/yamusic-sdk.js",
     "default": "./dist/yamusic-sdk.modern.mjs"
   },
