@@ -8,7 +8,7 @@ export type BaseArtist = {
    *
    * @example '3121'
    */
-  id: string;
+  id: number;
 
   /**
    * Artist name
