@@ -1,6 +1,6 @@
 {
   "name": "@checksanity/yamusic-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Unofficial Yandex.Music SDK for Web API written in Typescript",
   "source": "src/index.ts",
   "main": "dist/yamusic-sdk.js",
@@ -30,12 +30,7 @@
     "format:verify": "prettier --list-different \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "dev": "microbundle watch",
-    "build": "microbundle",
-    "build:mjs": "tsc --project tsconfig.mjs.json && cp package.mjs.json dist/mjs/package.json",
-    "build:cjs": "tsc --project tsconfig.cjs.json && cp package.cjs.json dist/cjs/package.json",
-    "build:win": "npm run build:cjs-win && npm run build:mjs-win",
-    "build:mjs-win": "tsc --project tsconfig.mjs.json && xcopy .\\package.mjs.json .\\dist\\mjs\\package.json /-I /Y",
-    "build:cjs-win": "tsc --project tsconfig.cjs.json && xcopy .\\package.cjs.json .\\dist\\cjs\\package.json /-I /Y"
+    "build": "microbundle"
   },
   "repository": {
     "type": "git",
