@@ -1,5 +1,5 @@
 import { BaseArtist } from '../artists/Artists.types';
-import { Pager } from '../common/Common.types';
+import { Pager, Region } from '../common/Common.types';
 import { Track } from '../tracks/Track.types';
 
 export type BaseAlbum = {
@@ -35,7 +35,7 @@ export type BaseAlbum = {
   /**
    * Album content warning
    */
-  contentWarning: AlbumContentWarning;
+  contentWarning?: AlbumContentWarning;
 
   /**
    * Album year
@@ -80,7 +80,7 @@ export type BaseAlbum = {
   /**
    * Album labels
    */
-  labels: AlbumLabel[];
+  labels: AlbumLabel[] | string[];
 
   /**
    * Is available?
@@ -121,6 +121,16 @@ export type BaseAlbum = {
    * Album duplicates
    */
   duplicates?: BaseAlbum[];
+
+  /**
+   * TODO regions
+   */
+  regions?: Region[];
+
+  /**
+   * TODO availableRegions
+   */
+  availableRegions?: string[];
 };
 
 export type AlbumWithTrackPosition = BaseAlbum & {
