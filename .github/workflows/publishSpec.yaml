@@ -3,8 +3,8 @@ name: Publish spec package to GitHub packages
 on:
   push:
     branches: [ 'stable', 'test' ]
-    paths:
-      - spec/**
+      # paths:
+    # - spec/**
 
 
 env:
