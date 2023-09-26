@@ -3,6 +3,9 @@
 This is an unofficial JavaScript/TypeScript SDK for
 the [Yandex.Music](https://music.yandex.ru/).
 
+Current OpenAPI specification can be found
+here: [yamusicdocs.voir.dev](https://yamusicdocs.voir.dev)
+
 ## Requirements
 
 Because this SDK uses `fetch` both in Node and the Browser, and ESM, we require the following:
