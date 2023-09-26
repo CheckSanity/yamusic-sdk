@@ -6,9 +6,10 @@ on:
       - stable
     paths:
       - spec/**
+
 defaults:
   run:
-    working-directory: ./spec
+    working-directory: spec
 
 jobs:
   build:

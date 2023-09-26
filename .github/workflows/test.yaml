@@ -5,6 +5,10 @@ on:
     branches:
       - stable
 
+defaults:
+  run:
+    working-directory: sdk
+
 jobs:
   build:
     runs-on: ubuntu-latest

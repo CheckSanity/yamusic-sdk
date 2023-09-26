@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-import { YaMusicSDK } from '../dist/cjs/index.js';
+import {YaMusicSDK} from '../sdk/dist/cjs/index.js';
 
 dotenv.config();
 
 const api = YaMusicSDK.create({
-  token: process.env.YANDEX_MUSIC_TOKEN,
+    token: process.env.YANDEX_MUSIC_TOKEN,
 });
 
 const status = await api.account.status();

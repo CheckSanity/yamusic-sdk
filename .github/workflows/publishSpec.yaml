@@ -5,6 +5,7 @@ on:
     branches: [ 'stable' ]
     paths:
       - spec/**
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: yamusic-openapi-spec
