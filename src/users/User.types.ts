@@ -1,5 +1,5 @@
 import { Playlist } from '../playlists/Playlists.types';
-import { Artist } from '../artists/Artists.types';
+import { ArtistDetailed } from '../artists/Artists.types';
 
 export type User = {
   /**
@@ -98,7 +98,7 @@ export type UserLikedPlaylist = {
   timestamp: string;
 };
 
-export type UserLikedArtist = Artist;
+export type UserLikedArtist = ArtistDetailed;
 
 export type UserLikedAlbum = {
   /**

@@ -1,142 +1,36 @@
-import { BaseArtist } from '../artists/Artists.types';
+import { Artist } from '../artists/Artists.types';
 import { AlbumWithTrackPosition } from '../albums/Albums.types';
 import { Region } from '../common/Common.types';
 
 export type Track = {
-  /**
-   * Track ID
-   */
-  id: number;
-
-  /**
-   * Track real ID
-   */
-  realId: number;
-
-  /**
-   * Track title
-   */
+  id: number | string;
+  realId?: number | string;
   title: string;
-
-  /**
-   * Track source
-   */
+  contentWarning?: string;
   trackSource: TrackSource;
-
-  /**
-   * Track major
-   */
-  major: TrackMajor;
-
-  /**
-   * Is available?
-   */
-  available: boolean;
-
-  /**
-   * Is available for users with subscription?
-   */
-  availableForPremiumUsers: boolean;
-
-  /**
-   * TODO ???
-   */
-  availableFullWithoutPermission: boolean;
-
-  /**
-   * TODO disclaimers ???
-   */
-  disclaimers: string[];
-
-  /**
-   * Availability options
-   */
-  availableForOptions: string[];
-
-  /**
-   * Track duration in milliseconds
-   */
+  major?: TrackMajor;
+  available?: boolean;
+  availableForPremiumUsers?: boolean;
+  availableFullWithoutPermission?: boolean;
+  disclaimers?: string[];
+  availableForOptions?: string[];
   durationMs: number;
-
-  /**
-   * TODO storageDir ???
-   */
-  storageDir: string;
-
-  /**
-   * TODO fileSize ???
-   */
-  fileSize: number;
-
-  /**
-   * TODO r128 ???
-   */
-  r128: TrackR128;
-
-  /**
-   * Track fade in and out timings
-   */
-  fade: TrackFade;
-
-  /**
-   * Track for preview duration in milliseconds
-   */
+  storageDir?: string;
+  fileSize?: number;
+  r128?: TrackR128;
+  fade?: TrackFade;
   previewDurationMs: number;
-
-  /**
-   * List of artists
-   */
-  artists: BaseArtist[];
-
-  /**
-   * List of albums
-   */
+  artists: Artist[];
   albums: AlbumWithTrackPosition[];
-
-  /**
-   * Track cover URI
-   */
-  coverUri: string;
-
-  /**
-   * Track OpenGraph image
-   */
-  ogImage: string;
-
-  /**
-   * Is track lyrics available?
-   */
-  lyricsAvailable: boolean;
-
-  /**
-   * Track lyrics info
-   */
-  lyricsInfo: TrackLyricsInfo;
-
-  /**
-   * Track type
-   */
+  coverUri?: string;
+  ogImage?: string;
+  lyricsAvailable?: boolean;
+  lyricsInfo?: TrackLyricsInfo;
   type: TrackType;
-
-  /**
-   * TODO rememberPosition ???
-   */
-  rememberPosition: boolean;
-
-  /**
-   * TODO trackSharingFlag ??
-   */
-  trackSharingFlag: TrackSharingFlag;
-
-  /**
-   * If present, then probably fields not available
-   */
+  rememberPosition?: boolean;
+  trackSharingFlag?: TrackSharingFlag;
   error?: string;
-
-  /**
-   * TODO regions
-   */
-  regions: Region[];
+  regions?: Region[];
 };
 
 export type SimilarTracks = {
@@ -174,14 +68,7 @@ export type LyricsLanguage = 'en' | string;
 export type TrackSource = 'OWN' | string;
 
 export type TrackMajor = {
-  /**
-   * Major ID
-   */
   id: number;
-
-  /**
-   * Major name
-   */
   name: string;
 };
 

@@ -8,6 +8,7 @@ import { TracksApi } from './tracks/Tracks.api';
 import { UsersApi } from './users/Users.api';
 import { SearchApi } from './search/Search.api';
 import { GenresApi } from './genres/Genres.api';
+import { FeedApi } from './feed/Feed.api';
 
 export type * from './account/Account.types';
 export type * from './albums/Albums.types';
@@ -34,6 +35,7 @@ export class YaMusicSDK {
   public users: UsersApi;
   public search: SearchApi;
   public genres: GenresApi;
+  public feed: FeedApi;
 
   private configuration: SdkConfig;
   private validator = new DefaultResponseValidator();
@@ -50,6 +52,7 @@ export class YaMusicSDK {
     this.users = new UsersApi(this);
     this.search = new SearchApi(this);
     this.genres = new GenresApi(this);
+    this.feed = new FeedApi(this);
   }
 
   public static create(config?: Partial<SdkConfig>): YaMusicSDK {

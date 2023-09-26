@@ -38,7 +38,7 @@ paths:
         - oAuthProxied: [ ]
       responses:
         200:
-          description: Ok
+          description: Account status and information
           content:
             application/json:
               schema:
@@ -139,7 +139,7 @@ paths:
         - oAuthProxied: [ ]
       responses:
         200:
-          description: Ok
+          description: User feed
           content:
             application/json:
               schema:
@@ -150,6 +150,9 @@ paths:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
                     type: object
+                    required:
+                      - nextRevision
+                      - today
                     properties:
                       nextRevision:
                         type: string
@@ -157,11 +160,11 @@ paths:
                         description: Date of next revision
                       canGetMoreEvents:
                         type: boolean
-                        description: ???
+                        description: ??? # TODO
                         example: false
                       pumpkin:
                         type: boolean
-                        description: ???
+                        description: ??? # TODO
                         example: false
                       isWizardPassed:
                         type: boolean
@@ -215,12 +218,10 @@ paths:
                                           example: "rock"
                                           description: Name
                                   genre:
-                                    nullable: true
                                     type: string
                                     example: "rock"
                                     description: Genre
                                   radioIsAvailable:
-                                    nullable: true
                                     type: boolean
                                     example: true
                                     description: Is radio available?
@@ -229,7 +230,9 @@ paths:
                                     items:
                                       $ref: '#/components/schemas/Track'
                                   albums:
-                                    $ref: '#/components/schemas/Album'
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Album'
                                   artist:
                                     $ref: '#/components/schemas/ArtistDetailed'
                                   artistsWithArtistsFromHistory:
@@ -240,7 +243,9 @@ paths:
                                         artist:
                                           $ref: '#/components/schemas/ArtistDetailed'
                                         artistsFromHistory:
-                                          $ref: '#/components/schemas/ArtistDetailed'
+                                          type: array
+                                          items:
+                                            $ref: '#/components/schemas/ArtistDetailed'
                                   similarArtists:
                                     type: array
                                     items:
@@ -253,17 +258,14 @@ paths:
                                         artist:
                                           $ref: '#/components/schemas/ArtistDetailed'
                                   similarToArtist:
-                                    nullable: true
                                     type: array
                                     items:
                                       $ref: '#/components/schemas/ArtistDetailed'
                                   similarToGenre:
-                                    nullable: true
                                     type: string
                                     description: Similar to genre
                                     example: "rock"
                                   similarGenre:
-                                    nullable: true
                                     description: Similar genre
                                     example: "rnr"
                             trackToPlay:
@@ -335,12 +337,13 @@ paths:
   # Genres
   /genres:
     get:
+      summary: Get list of genres
       operationId: getGenres
       tags:
         - 'Genres'
       responses:
         200:
-          description: Ok
+          description: List of genres
           content:
             application/json:
               schema:
@@ -353,6 +356,7 @@ paths:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
                     type: array
+                    description: List of genres
                     items:
                       $ref: "#/components/schemas/Genre"
 
@@ -703,79 +707,7 @@ paths:
                   invocationInfo:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
-                    type: object
-                    description: Artist detailed information, albums, popular tracks, etc...
-                    properties:
-                      artist:
-                        $ref: '#/components/schemas/ArtistDetailed'
-                      albums:
-                        description: List of artist's albums
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Album'
-                      alsoAlbums:
-                        description: List of artist's other albums
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Album'
-                      lastReleaseIds: ## TODO last release ids
-                        type: array
-                        description: TODO
-                        items:
-                          type: object
-                      popularTracks:
-                        type: array
-                        description: List of artist's most popular tracks
-                        items:
-                          $ref: '#/components/schemas/Track'
-                      bandlinkScannerLink: ## TODO
-                        type: object
-                        description: TODO
-                      similarArtists:
-                        type: array
-                        description: List of artists similar to source artist
-                        items:
-                          $ref: '#/components/schemas/Artist'
-                      allCovers:
-                        type: array
-                        description: List of all artist covers
-                        items:
-                          $ref: '#/components/schemas/Cover'
-                      concerts: ## TODO
-                        type: array
-                        description: TODO
-                        items:
-                          type: object
-                      videos:
-                        type: array
-                        description: List of artist's videos
-                        items:
-                          $ref: '#/components/schemas/VideoSupplement'
-                      clips: ## TODO
-                        type: array
-                        description: TODO
-                        items:
-                          type: object
-                      vinyls: ## TODO
-                        type: array
-                        description: TODO
-                        items:
-                          type: object
-                      hasPromotion:
-                        type: boolean
-                        description: ??? ## TODO
-                        example: false
-                      lastReleases: ## TODO
-                        type: array
-                        description: TODO
-                        items:
-                          type: object
-                      backgroundVideoUrl:
-                        type: string
-                        description: Background video URL
-                        example: https://strm.yandex.ru/vh-music-videoshots-converted/vod-content/8716080755716743144/mp4/mp4/720x848p.mp4
-                      customWave:
-                        $ref: '#/components/schemas/CustomWave'
+                    $ref: '#/components/schemas/ArtistResponse'
         400:
           description: Bad Request
           content:
@@ -826,6 +758,7 @@ paths:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
                     type: object
+                    description: List of tracks with pagination meta
                     properties:
                       pager:
                         $ref: '#/components/schemas/Pager'
@@ -834,6 +767,58 @@ paths:
                         description: List of tracks
                         items:
                           $ref: '#/components/schemas/Track'
+  /artists/{artistId}/direct-albums:
+    parameters:
+      - in: path
+        required: true
+        name: artistId
+        description: Artist ID
+        schema:
+          type: string
+          example: 218099
+      - in: query
+        required: false
+        name: page
+        description: Page number
+        schema:
+          type: number
+          example: 0
+      - in: query
+        required: false
+        name: pageSize
+        description: Page size
+        schema:
+          type: number
+          example: 20
+    get:
+      summary: Get artist's albums
+      operationId: getArtistAlbums
+      tags:
+        - "Artists"
+      responses:
+        200:
+          description: List of artist's albums
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    description: List of albums with pagination meta
+                    properties:
+                      pager:
+                        $ref: '#/components/schemas/Pager'
+                      albums:
+                        type: array
+                        description: List of albums
+                        items:
+                          $ref: '#/components/schemas/Album'
 
   # Playlists
   /users/{userId}/playlists:
@@ -1912,13 +1897,21 @@ components:
     ## Account
     AccountStatus:
       type: object
-      description: Информация о правах пользователя, их изначальных значениях и даты окончания
+      description: Information about current account
       required:
-        - "account"
-        - "permissions"
+        - account
+        - permissions
       properties:
         account:
           $ref: "#/components/schemas/Account"
+        defaultEmail:
+          type: string
+          description: Default account email
+          example: email@yandex.ru
+        userhash:
+          type: string
+          description: User hash
+          example: f8a9049bf30dfb5
         permissions:
           $ref: "#/components/schemas/Permissions"
         subscription:
@@ -1933,7 +1926,7 @@ components:
           example: 0
         pretrialActive:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         # TODO masterHub
         plus:
@@ -1948,14 +1941,6 @@ components:
               description: Is tutorial completed?
               type: boolean
               example: true
-        defaultEmail:
-          type: string
-          description: Default account email
-          example: email@yandex.ru
-        userhash:
-          type: string
-          description: User hash
-          example: f8a9049bf30dfb5
     Account:
       required:
         - 'now'
@@ -2004,11 +1989,17 @@ components:
           type: boolean
           description: Is hosted user?
           example: false
+        birthday:
+          type: string
+          description: User birthday
+          example: "1995-10-04"
         "passport-phones":
           type: array
           description: Mobile phone numbers
           items:
             type: object
+            required:
+              - phone
             properties:
               phone:
                 type: string
@@ -2023,10 +2014,14 @@ components:
           example: false
         nonOwnerFamilyMember:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
     Permissions:
       type: object
+      required:
+        - until
+        - values
+        - default
       description: User permissions
       properties:
         until:
@@ -2057,7 +2052,7 @@ components:
           description: Can start trial subscription?
         mcdonalds:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         autoRenewable:
           type: array
@@ -2152,6 +2147,24 @@ components:
     AccountSettings:
       type: object
       description: Account settings
+      required:
+        - uid
+        - lastFmScrobblingEnabled
+        - facebookScrobblingEnabled
+        - shuffleEnabled
+        - addNewTrackOnPlaylistTop
+        - volumePercents
+        - userMusicVisibility
+        - userSocialVisibility
+        - adsDisabled
+        - modified
+        - rbtDisabled
+        - theme
+        - promosDisabled
+        - autoPlayRadio
+        - syncQueueEnabled
+        - explicitForbidden
+        - childModEnabled
       properties:
         uid:
           type: number
@@ -2159,7 +2172,7 @@ components:
           example: 132111865
         lastFmScrobblingEnabled:
           type: boolean
-          description: Is last.fm scrobbline enabled?
+          description: Is last.fm scrobbling enabled?
           example: false
         facebookScrobblingEnabled:
           type: boolean
@@ -2222,23 +2235,6 @@ components:
           example: false
 
     ## Playlist
-    GeneratedPlaylist:
-      type: object
-      properties:
-        type:
-          type: string
-          description: Playlist type
-          example: "recentTracks"
-        ready:
-          type: boolean
-          description: Is playlist ready?
-          example: true
-        notify:
-          type: boolean
-          description: ???
-          example: true
-        data:
-          $ref: '#/components/schemas/PlaylistWithTracks'
     Playlist:
       type: object
       required:
@@ -2253,6 +2249,7 @@ components:
         - visibility
         - created
         - modified
+        - durationMs
       properties:
         owner:
           $ref: "#/components/schemas/UserInfo"
@@ -2346,6 +2343,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - value
             properties:
               id:
                 type: string
@@ -2374,12 +2374,20 @@ components:
           type: string
           description: Background image URL
           example: "avatars.yandex.net/get-music-user-playlist/69910/RECENT_TRACKS.rnd-1251314265.personal-playlist-branding/%%"
+        likesCount:
+          type: number
+          example: 2
+          description: Likes count
         customWave:
           $ref: '#/components/schemas/CustomWave'
         lastOwnerPlaylists:
           type: array
           items:
             $ref: '#/components/schemas/Playlist'
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegionEnum'
     PlaylistWithTracks:
       allOf:
         - $ref: '#/components/schemas/Playlist'
@@ -2387,8 +2395,12 @@ components:
           properties:
             tracks:
               type: array
+              description: List of tracks (id, album, timestamp)
               items:
                 type: object
+                required:
+                  - id
+                  - timestamp
                 properties:
                   id:
                     type: string
@@ -2402,10 +2414,34 @@ components:
                     type: string
                     example: "2023-08-17T21:00:00+00:00"
                     description: Track added to playlist date and time
-            likesCount:
-              type: number
-              example: 1
-              description: Playlist likes count
+            pager:
+              $ref: '#/components/schemas/Pager'
+    PlaylistWithTrackIds:
+      allOf:
+        - $ref: '#/components/schemas/Playlist'
+        - type: object
+          properties:
+            tracks:
+              type: array
+              description: List of tracks (id, album, timestamp)
+              items:
+                type: object
+                required:
+                  - id
+                  - timestamp
+                properties:
+                  id:
+                    type: string
+                    example: 1235412
+                    description: Track ID
+                  albumId:
+                    type: string
+                    example: 1235412
+                    description: Track album ID
+                  timestamp:
+                    type: string
+                    example: "2023-08-17T21:00:00+00:00"
+                    description: Track added to playlist date and time
             pager:
               $ref: '#/components/schemas/Pager'
     PlaylistVisibilityEnum:
@@ -2421,6 +2457,13 @@ components:
       type: object
       required:
         - id
+        - title
+        - trackSource
+        - durationMs
+        - previewDurationMs
+        - artists
+        - albums
+        - type
       properties:
         id:
           type: string
@@ -2435,7 +2478,7 @@ components:
           example: "Walking Away"
           description: Track title
         contentWarning:
-          nullable: true
+          type: string
           example: "explicit"
           description: Track content warning
         trackSource:
@@ -2444,6 +2487,9 @@ components:
           description: Track source
         major:
           type: object
+          required:
+            - id
+            - name
           properties:
             id:
               type: number
@@ -2459,18 +2505,20 @@ components:
           example: true
         availableForPremiumUsers:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         availableFullWithoutPermission:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         disclaimers:
           type: array # TODO
+          description: ???
           items:
             type: string
         availableForOptions:
           type: array
+          description: ??? # TODO
           items:
             type: string
             example: 'bookmate'
@@ -2481,13 +2529,14 @@ components:
         storageDir:
           type: string
           example: ""
-          description: ???
+          description: ??? # TODO
         fileSize:
           type: number
           example: 0
-          description: ???
+          description: ??? # TODO
         r128:
           type: object
+          description: ??? # TODO
           properties:
             i:
               type: number
@@ -2497,6 +2546,7 @@ components:
               example: 1.69
         fade:
           type: object
+          description: ??? # TODO
           properties:
             inStart:
               type: number
@@ -2516,9 +2566,11 @@ components:
           description: Track preview duration in milliseconds
         artists:
           type: array
+          description: List of track's artists
           items:
             $ref: '#/components/schemas/Artist'
         albums:
+          description: List of track's albums
           type: array
           items:
             $ref: "#/components/schemas/AlbumWithTrackPosition"
@@ -2537,6 +2589,9 @@ components:
           example: true
         lyricsInfo:
           type: object
+          required:
+            - hasAvailableSyncLyrics
+            - hasAvailableTextLyrics
           properties:
             hasAvailableSyncLyrics:
               type: boolean
@@ -2553,11 +2608,19 @@ components:
         rememberPosition:
           type: boolean
           example: false
-          description: ???
+          description: ??? # TODO
         trackSharingFlag:
           type: string
           example: "COVER_ONLY" # VIDEO_ALLOWED
-          description: ???
+          description: ??? # TODO
+        error:
+          type: string
+          example: "some-error"
+          description: Error message
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegionEnum'
     TrackInAlbum:
       allOf:
         - $ref: '#/components/schemas/Album'
@@ -2688,6 +2751,7 @@ components:
       type: object
       required:
         - id
+        - name
       properties:
         id:
           description: Artist ID
@@ -2741,16 +2805,24 @@ components:
           description: ??? # TODO
           items:
             type: object
-        error:
-          type: string
-          example: "not-found"
-          description: Error type
         dbAliases:
           type: array
           description: List of database aliases
           items:
             type: string
             example: "Нирвана"
+        likesCount:
+          type: number
+          description: Artist likes count
+          example: 5
+        error:
+          type: string
+          example: "not-found"
+          description: Error type
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegionEnum'
     ArtistDetailed:
       description: Artist detailed information
       allOf:
@@ -2801,12 +2873,93 @@ components:
                     description: "Link type"
                   socialNetwork:
                     type: string
-                    example: "twitter"
+                    example: "twitter" # youtube, tiktok, vk, telegram
                     description: "Social network type"
             ticketsAvailable:
               type: boolean
               example: false
               description: Artist tickets available?
+    ArtistResponse:
+      type: object
+      description: Artist detailed information, albums, popular tracks, etc...
+      required:
+        - artist
+        - albums
+      properties:
+        artist:
+          $ref: '#/components/schemas/ArtistDetailed'
+        albums:
+          description: List of artist's albums
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        alsoAlbums:
+          description: List of artist's other albums
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        lastReleaseIds: ## TODO last release ids
+          type: array
+          description: ???
+          items:
+            type: object
+        popularTracks:
+          type: array
+          description: List of artist's most popular tracks
+          items:
+            $ref: '#/components/schemas/Track'
+        bandlinkScannerLink: ## TODO
+          type: object
+          description: TODO
+        similarArtists:
+          type: array
+          description: List of artists similar to source artist
+          items:
+            $ref: '#/components/schemas/Artist'
+        allCovers:
+          type: array
+          description: List of all artist covers
+          items:
+            $ref: '#/components/schemas/Cover'
+        concerts: ## TODO
+          type: array
+          description: ???
+          items:
+            type: object
+        videos:
+          type: array
+          description: List of artist's videos
+          items:
+            $ref: '#/components/schemas/VideoSupplement'
+        clips: ## TODO
+          type: array
+          description: ???
+          items:
+            type: object
+        vinyls: ## TODO
+          type: array
+          description: ???
+          items:
+            type: object
+        hasPromotion: ## TODO
+          type: boolean
+          description: ???
+          example: false
+        lastReleases: ## TODO
+          type: array
+          description: ???
+          items:
+            type: object
+        backgroundVideoUrl:
+          type: string
+          description: Background video URL
+          example: https://strm.yandex.ru/vh-music-videoshots-converted/vod-content/8716080755716743144/mp4/mp4/720x848p.mp4
+        customWave:
+          $ref: '#/components/schemas/CustomWave'
+        error:
+          type: string
+          example: "some-error"
+          description: Error message
 
     ## Album
     Album:
@@ -2815,7 +2968,8 @@ components:
       required:
         - id
         - title
-        - type
+        - genre
+        - trackCount
       properties:
         id:
           type: number
@@ -2828,7 +2982,7 @@ components:
         "type":
           description: Album type
           type: string
-          enum: [ "single", "podcast", "audiobook" ]
+          enum: [ "single", "podcast", "audiobook", "compilation" ]
         metaType:
           description: Album meta type
           type: string
@@ -2846,7 +3000,7 @@ components:
           example: 2023
           description: Album year
         coverUri:
-          description: Cover uri template
+          description: Cover URI template
           type: string
           example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
         ogImage:
@@ -2883,6 +3037,9 @@ components:
           description: List of labels
           items:
             type: object
+            required:
+              - id
+              - name
             properties:
               id:
                 type: number
@@ -2928,6 +3085,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Album'
+        regions:
+          description: TODO
+          type: array
+          items:
+            $ref: '#/components/schemas/RegionEnum'
+        availableRegions: # TODO
+          type: array
+          description: ???
+          items:
+            type: string
         error:
           description: Error message
           type: string
@@ -2967,6 +3134,9 @@ components:
     ## User
     UserInfo:
       type: object
+      required:
+        - uid
+        - login
       properties:
         uid:
           type: number
@@ -3252,7 +3422,7 @@ components:
           type: string
           enum: [ playlistOfTheDay ]
         data:
-          $ref: "#/components/schemas/GeneratedPlaylist"
+          $ref: "#/components/schemas/PlaylistWithTrackIds"
 
     ## Common
     SexEnum:
@@ -3268,6 +3438,12 @@ components:
         - "PRIVATE"
         - "PUBLIC"
       example: "PUBLIC"
+    RegionEnum:
+      type: string
+      enum:
+        - "RUSSIA"
+        - "RUSSIA_PREMIUM"
+      example: "RUSSIA_PREMIUM"
     InvocationInfo:
       type: object
       description: Invocation info from API
@@ -3346,6 +3522,10 @@ components:
     Pager:
       description: Meta data for pagination
       type: object
+      required:
+        - total
+        - page
+        - perPage
       properties:
         total:
           type: number

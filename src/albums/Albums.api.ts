@@ -1,13 +1,13 @@
 import { BaseApi } from '../BaseApi';
-import { AlbumWithTracks, BaseAlbum } from './Albums.types';
+import { Album, AlbumWithTracks } from './Albums.types';
 
 export class AlbumsApi extends BaseApi {
-  public album(uid: number): Promise<BaseAlbum> {
-    return this.getRequest<BaseAlbum>(`albums/${uid}`);
+  public album(uid: number): Promise<Album> {
+    return this.getRequest<Album>(`albums/${uid}`);
   }
 
-  public albums(uid: number[]): Promise<BaseAlbum[]> {
-    return this.getRequest<BaseAlbum[]>(`albums?albumIds=${uid}`);
+  public albums(uid: number[]): Promise<Album[]> {
+    return this.getRequest<Album[]>(`albums?albumIds=${uid}`);
   }
 
   public albumWithTracks(uid: number): Promise<AlbumWithTracks> {

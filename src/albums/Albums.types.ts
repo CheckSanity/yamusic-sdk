@@ -1,146 +1,45 @@
-import { BaseArtist } from '../artists/Artists.types';
+import { Artist } from '../artists/Artists.types';
 import { Pager, Region } from '../common/Common.types';
 import { Track } from '../tracks/Track.types';
 
-export type BaseAlbum = {
-  /**
-   * Album ID
-   *
-   * @example 62234
-   */
+export type Album = {
   id: number;
-
-  /**
-   * Album title
-   */
   title: string;
-
-  /**
-   * Album type
-   */
   type?: AlbumType;
-
-  /**
-   * Album meta type
-   */
   metaType: AlbumMetaType;
-
-  /**
-   * Album release date
-   *
-   * @example '2005-06-13T00:00:00+04:00'
-   */
-  releaseDate: string;
-
-  /**
-   * Album content warning
-   */
   contentWarning?: AlbumContentWarning;
-
-  /**
-   * Album year
-   */
-  year: number;
-
-  /**
-   * Album cover URI
-   */
-  coverUri: string;
-
-  /**
-   * Album OpenGraph URI
-   */
-  ogImage: string;
-
-  /**
-   * Album genre
-   */
+  releaseDate?: string;
+  year?: number;
+  coverUri?: string;
+  ogImage?: string;
   genre: string;
-
-  /**
-   * Album track count
-   */
   trackCount: number;
-
-  /**
-   * Is recent?
-   */
-  recent: boolean;
-
-  /**
-   * TODO veryImportant ???
-   */
-  veryImportant: boolean;
-
-  /**
-   * Album artists
-   */
-  artists: BaseArtist[];
-
-  /**
-   * Album labels
-   */
-  labels: AlbumLabel[] | string[];
-
-  /**
-   * Is available?
-   */
-  available: boolean;
-
-  /**
-   * Is available for premium users?
-   */
+  likesCount?: number;
+  recent?: boolean;
+  veryImportant?: boolean;
+  artists?: Artist[];
+  labels?: AlbumLabel[];
+  available?: boolean;
   availableForPremiumUsers?: boolean;
-
-  /**
-   * TODO disclaimers ???
-   */
-  disclaimers: string[];
-
-  /**
-   * Available for options?
-   */
-  availableForOptions?: string[];
-
-  /**
-   * Available for mobile?
-   */
+  disclaimers?: string[];
   availableForMobile?: boolean;
-
-  /**
-   * Available partially
-   */
   availablePartially?: boolean;
-
-  /**
-   * Best tracks IDs
-   */
-  bests: number[];
-
-  /**
-   * Album duplicates
-   */
-  duplicates?: BaseAlbum[];
-
-  /**
-   * TODO regions
-   */
+  availableForOptions?: string[];
+  bests?: number[];
+  duplicates?: Album[];
   regions?: Region[];
-
-  /**
-   * TODO availableRegions
-   */
   availableRegions?: string[];
+  error?: string;
 };
 
-export type AlbumWithTrackPosition = BaseAlbum & {
+export type AlbumWithTrackPosition = Album & {
   /**
    * Track position
    */
   trackPosition?: AlbumTrackPosition;
 };
 
-export type AlbumWithTracks = BaseAlbum & {
+export type AlbumWithTracks = Album & {
   sortOrder: AlbumSortOrder;
   volumes: AlbumVolume[];
   pager: Pager;
@@ -150,21 +49,19 @@ export type AlbumVolume = Track[];
 
 export type AlbumSortOrder = 'asc' | 'desc';
 
-export type AlbumType = 'single' | 'compilation' | string;
+export type AlbumType =
+  | 'single'
+  | 'podcast'
+  | 'audiobook'
+  | 'compilation'
+  | string;
 
-export type AlbumMetaType = 'music' | string;
+export type AlbumMetaType = 'music' | 'single' | 'podcast' | string;
 
 export type AlbumContentWarning = 'explicit' | string;
 
 export type AlbumLabel = {
-  /**
-   * Album label ID
-   */
   id: number;
-
-  /**
-   * Album label name
-   */
   name: string;
 };
 

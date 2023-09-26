@@ -1,7 +1,7 @@
-import { Artist } from '../artists/Artists.types';
+import { ArtistDetailed } from '../artists/Artists.types';
 import { Track } from '../tracks/Track.types';
 import { Playlist } from '../playlists/Playlists.types';
-import { BaseAlbum } from '../albums/Albums.types';
+import { Album } from '../albums/Albums.types';
 
 export type Search = {
   type: SearchType;
@@ -9,10 +9,10 @@ export type Search = {
   perPage: number;
   text: string;
   searchRequestId: string;
-  artists?: SearchResult<Artist>;
+  artists?: SearchResult<ArtistDetailed>;
   playlists?: SearchResult<Playlist>;
   tracks?: SearchResult<Track>;
-  albums?: SearchResult<BaseAlbum>;
+  albums?: SearchResult<Album>;
   // TODO Podcasts podcasts?: [];
   // TODO Users unknown users?: [];
 };
@@ -40,7 +40,7 @@ export type SearchSuggest = {
   best: {
     type: SearchType;
     text: string;
-    result: Artist | Playlist | Track | BaseAlbum;
+    result: ArtistDetailed | Playlist | Track | Album;
   };
 
   /**

@@ -1,118 +1,52 @@
-import { Cover, CustomWave, Pager, Region } from '../common/Common.types';
-import { BaseAlbum } from '../albums/Albums.types';
+import {
+  Cover,
+  CustomWave,
+  Pager,
+  Region,
+  VideoSupplement,
+} from '../common/Common.types';
+import { Album } from '../albums/Albums.types';
 import { Track } from '../tracks/Track.types';
 
-export type BaseArtist = {
-  /**
-   * Artist ID
-   *
-   * @example '3121'
-   */
+export type Artist = {
   id: number;
-
-  /**
-   * Artist name
-   *
-   * @example 'Metallica
-   */
   name: string;
-
-  /**
-   * Is various?
-   *
-   */
-  various: boolean;
-
-  /**
-   * Is composer?
-   */
-  composer: boolean;
-
-  /**
-   * Artist cover image
-   */
+  various?: boolean;
+  composer?: boolean;
   cover?: Cover;
-
-  /**
-   * Artist OpenGraph image URL
-   */
-  ogImage?: string;
-
-  /**
-   * Artist genres
-   *
-   * @example ['thrashmetal']
-   */
-  genres: string[];
-
-  /**
-   * TODO ??
-   */
-  disclaimers: string[];
-};
-
-export type Artist = BaseArtist & {
-  /**
-   * Artist album and tracks counts
-   */
+  genres?: string[];
   counts: ArtistCounts;
-
-  /**
-   * Is available?
-   */
-  available: boolean;
-
-  /**
-   * Artist ratings
-   */
-  ratings?: ArtistRatings;
-
-  /**
-   * Artist links
-   */
-  links: ArtistLink[];
-
-  /**
-   * Is tickets available?
-   */
-  ticketsAvailable?: boolean;
-
-  /**
-   * Likes count
-   */
-  likesCount?: number;
-
-  /**
-   * Database aliases
-   */
+  disclaimers?: string[];
   dbAliases?: string[];
-
-  /**
-   * TODO Regions
-   */
-  regions: Region[];
+  likesCount?: number;
+  error?: string;
+  regions?: Region[];
 };
 
-export type ArtistDetailed = {
-  artist: Artist;
-  albums: BaseAlbum[];
-  alsoAlbums: BaseAlbum[];
-  lastReleaseIds: number[];
-  popularTracks: Track[];
-  // TODO bandlinkScannerLink
-  similarArtists: Artist[];
-  allCovers: Cover[];
-  // TODO concerts
-  videos: ArtistVideo[];
-  // TODO "clips": [],
-  // TODO "vinyls": [],
+export type ArtistDetailed = Artist & {
+  ogImage?: string;
+  ratings: ArtistRatings;
+  links: ArtistLink[];
+  ticketsAvailable?: boolean;
+};
+
+export type ArtistResponse = {
+  artist: ArtistDetailed;
+  albums: Album[];
+  alsoAlbums?: Album[];
+  lastReleaseIds?: number[];
+  popularTracks?: Track[];
+  bandlinkScannerLink?: unknown;
+  similarArtists?: Artist[];
+  allCovers?: Cover[];
+  concerts?: unknown[];
+  videos?: VideoSupplement[];
+  clips?: unknown[];
+  vinyls?: unknown[];
   hasPromotions?: boolean;
-  // TODO lastReleases: [];
+  lastReleases?: unknown[];
   backgroundVideoUrl?: string;
   customWave?: CustomWave;
-  /**
-   * If present, then probably fields not available
-   */
   error?: string;
 };
 
@@ -130,28 +64,9 @@ export type ArtistRatings = {
 };
 
 export type ArtistLink = {
-  /**
-   * Title
-   *
-   * @example 'metallicatv'
-   */
   title: string;
-
-  /**
-   * URL
-   *
-   * @example 'http://www.youtube.com/metallicatv'
-   */
   href: string;
-
-  /**
-   * Type
-   */
   type: ArtistLinkType;
-
-  /**
-   * Social network name
-   */
   socialNetwork?: ArtistSocialNetwork;
 };
 
@@ -165,16 +80,6 @@ export type ArtistSocialNetwork =
   | 'telegram'
   | string;
 
-export type ArtistVideo = {
-  title: string;
-  cover: string;
-  embedUrl: string;
-  provider: ArtistVideoProvider;
-  providerVideoId: string;
-};
-
-export type ArtistVideoProvider = 'yandex' | string;
-
 export type ArtistTracks = {
   pager: Pager;
   tracks: Track[];
@@ -182,5 +87,5 @@ export type ArtistTracks = {
 
 export type ArtistAlbums = {
   pager: Pager;
-  albums: BaseAlbum[];
+  albums: Album[];
 };

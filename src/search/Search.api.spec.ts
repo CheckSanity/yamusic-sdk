@@ -1,4 +1,4 @@
-import { Artist, YaMusicSDK } from '../YaMusicSDK';
+import { ArtistDetailed, YaMusicSDK } from '../YaMusicSDK';
 import {
   buildIntegrationTestSdkInstance,
   FetchApiSpy,
@@ -96,7 +96,9 @@ describe('Search API', () => {
 
       expect(result.best.text).toStrictEqual('kasabian');
       expect(result.best.type).toStrictEqual('artist');
-      expect((result.best.result as Artist).name).toStrictEqual('Kasabian');
+      expect((result.best.result as ArtistDetailed).name).toStrictEqual(
+        'Kasabian',
+      );
     });
   });
 });

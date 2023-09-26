@@ -1,0 +1,32 @@
+name: Test the application
+
+on:
+  pull_request:
+    branches:
+      - stable
+    paths:
+      - spec/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        working-directory: ./spec
+        run: npm install
+      - name: Run Prettier
+        working-directory: ./spec
+        run: npm run format:verify
+      - name: Run ESLint
+        working-directory: ./spec
+        run: npm run lint
+      - name: Run build
+        working-directory: ./spec
+        run: num run build

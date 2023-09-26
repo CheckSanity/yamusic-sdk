@@ -1,9 +1,14 @@
 import { BaseApi } from '../BaseApi';
-import { ArtistAlbums, ArtistDetailed, ArtistTracks } from './Artists.types';
+import {
+  ArtistAlbums,
+  ArtistDetailed,
+  ArtistResponse,
+  ArtistTracks,
+} from './Artists.types';
 
 export class ArtistsApi extends BaseApi {
-  public artist(uid: number): Promise<ArtistDetailed> {
-    return this.getRequest<ArtistDetailed>(`artists/${uid}`);
+  public artist(uid: number): Promise<ArtistResponse> {
+    return this.getRequest<ArtistResponse>(`artists/${uid}`);
   }
 
   public artists(uid: number[]): Promise<ArtistDetailed[]> {
