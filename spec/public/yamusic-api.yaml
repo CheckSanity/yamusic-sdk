@@ -840,7 +840,7 @@ paths:
           example: "1000,1003"
     get:
       operationId: getUserPlaylistsByIds
-      summary: Получение плейлистов по идентификаторам
+      summary: Get playlists by IDs
       tags:
         - Playlists
       security:
