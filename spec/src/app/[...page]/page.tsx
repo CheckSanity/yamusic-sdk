@@ -1,5 +1,5 @@
-import OpenApi from '@/components/OpenApi';
+import OpenApi from '@/components/OpenApi'
 
 export default function Home() {
-  return <OpenApi />;
+  return <OpenApi />
 }

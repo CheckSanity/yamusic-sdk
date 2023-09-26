@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { RedocStandalone } from 'redoc';
+import React from 'react'
+import { RedocStandalone } from 'redoc'
 
 const OpenApi: React.FC = () => {
-  return <RedocStandalone specUrl={'/yamusic-api.yaml'} />;
-};
+  return <RedocStandalone specUrl={'/yamusic-api.yaml'} />
+}
 
-export default OpenApi;
+export default OpenApi

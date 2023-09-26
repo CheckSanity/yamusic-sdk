@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
-import StyledComponentsRegistry from '@/lib/registry';
-import React from 'react';
+import type { Metadata } from 'next'
+import StyledComponentsRegistry from '@/lib/registry'
+import React from 'react'
 
 export const metadata: Metadata = {
   title: 'Yandex.Music OpenAPI',
   description: 'Open API for Yandex.Music',
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
@@ -18,5 +18,5 @@ export default function RootLayout({
         <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
       </body>
     </html>
-  );
+  )
 }
