@@ -1,13 +1,15 @@
-name: Test the SDK
+name: Test the OpenAPI specification
 
 on:
   pull_request:
     branches:
       - stable
+    paths:
+      - spec/**
 
 defaults:
   run:
-    working-directory: sdk
+    working-directory: spec
 
 jobs:
   build:
@@ -18,7 +20,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '18.x'
+          node-version: '19.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
         run: npm install
@@ -26,8 +28,5 @@ jobs:
         run: npm run format:verify
       - name: Run ESLint
         run: npm run lint
-      - name: Run tests
-        env:
-          INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN }}
-          INTEGRATION_TESTS_YANDEX_MUSIC_UID: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_UID }}
-        run: npm run test
+      - name: Run build
+        run: npm run build

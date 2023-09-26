@@ -1,0 +1,47 @@
+{
+  "name": "@checksanity/yamusic-spec",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format:verify": "prettier --list-different \"src/**/*.{js,ts,jsx,tsx,html,vue}\""
+  },
+  "dependencies": {
+    "core-js": "^3.32.2",
+    "mobx": "^6.10.2",
+    "next": "^13.5.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "redoc": "^2.0.0",
+    "styled-components": "^6.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.7.0",
+    "@types/react": "^18.2.23",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "eslint": "^8.50.0",
+    "eslint-config-next": "^13.5.3",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
+    "sass": "^1.68.0",
+    "typescript": "^5.2.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "next/core-web-vitals",
+      "prettier"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "useTabs": false
+  }
+}
