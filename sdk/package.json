@@ -1,6 +1,6 @@
 {
   "name": "@checksanity/yamusic-sdk",
-  "version": "0.0.4",
+  "version": "0.0.5-alfa",
   "description": "Unofficial Yandex.Music SDK for Web API written in Typescript",
   "source": "src/index.ts",
   "main": "dist/yamusic-sdk.js",
