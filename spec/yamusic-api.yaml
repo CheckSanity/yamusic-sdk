@@ -1,0 +1,3403 @@
+openapi: 3.0.1
+info:
+  title: Yandex Music Api
+  description: "Yandex Music API specification"
+  version: 0.0.1
+servers:
+  - url: https://yandex-music-cors-proxy.onrender.com/https://api.music.yandex.net:443/
+  - url: https://api.music.yandex.net:443/
+tags:
+  - name: 'Artists'
+  - name: 'Albums'
+  - name: 'Tracks'
+  - name: 'Playlists'
+  - name: 'Likes'
+  - name: 'Search'
+  - name: 'User'
+  - name: 'Account'
+  - name: 'Feed'
+  - name: 'Genres'
+
+paths:
+  # Account
+  /account/status:
+    description: Get account status for current user
+    get:
+      operationId: getAccountStatus
+      tags:
+        - "Account"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/AccountStatus"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+  /account/settings:
+    description: Account settings
+    get:
+      operationId: getAccountSettings
+      summary: Get current user account settings
+      tags:
+        - "Account"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/AccountSettings"
+    post:
+      operationId: changeAccountSettings
+      summary: Change account settings
+      tags:
+        - "Account"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              description: Словарь параметров и значений
+              type: object
+              additionalProperties: true
+              example:
+                theme: "black"
+                volumePercents: 80
+                adsDisabled: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                description: New account settings
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    oneOf:
+                      - $ref: "#/components/schemas/AccountSettings"
+                      - type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+
+  # Feed
+  /feed:
+    get:
+      operationId: getFeed
+      tags:
+        - "Feed"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required: [ invocationInfo, result ]
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      nextRevision:
+                        type: string
+                        example: "2023-07-25"
+                        description: Date of next revision
+                      canGetMoreEvents:
+                        type: boolean
+                        description: ???
+                        example: false
+                      pumpkin:
+                        type: boolean
+                        description: ???
+                        example: false
+                      isWizardPassed:
+                        type: boolean
+                        description: Is initial wizard passed?
+                        example: true
+                      today:
+                        type: string
+                        example: "2023-08-19"
+                        description: Today's date
+                      days:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            day:
+                              type: string
+                              example: "2023-08-19"
+                              description: ???
+                            events:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: "RUHjJYYj"
+                                    description: Event id
+                                  type:
+                                    type: string
+                                    example: "genre-top" #"recommended-similar-artists", "new-tracks-of-favorite-genre", "recommended-artists-with-artists-from-history"
+                                    description: Event type
+                                  typeForFrom:
+                                    type: string
+                                    example: "genre-top" #"tracks-by-genre", "recommended-artists-with-artists-from-history"
+                                    description: ???
+                                  title:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        type:
+                                          type: string
+                                          example: "genre"
+                                          description: Title type
+                                        text:
+                                          type: string
+                                          example: "Foreign rock"
+                                          description: "Title"
+                                        name:
+                                          type: string
+                                          example: "rock"
+                                          description: Name
+                                  genre:
+                                    nullable: true
+                                    type: string
+                                    example: "rock"
+                                    description: Genre
+                                  radioIsAvailable:
+                                    nullable: true
+                                    type: boolean
+                                    example: true
+                                    description: Is radio available?
+                                  tracks:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/Track'
+                                  albums:
+                                    $ref: '#/components/schemas/Album'
+                                  artist:
+                                    $ref: '#/components/schemas/ArtistDetailed'
+                                  artistsWithArtistsFromHistory:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        artist:
+                                          $ref: '#/components/schemas/ArtistDetailed'
+                                        artistsFromHistory:
+                                          $ref: '#/components/schemas/ArtistDetailed'
+                                  similarArtists:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        subscribed:
+                                          type: boolean
+                                          example: false
+                                          description: ???
+                                        artist:
+                                          $ref: '#/components/schemas/ArtistDetailed'
+                                  similarToArtist:
+                                    nullable: true
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/ArtistDetailed'
+                                  similarToGenre:
+                                    nullable: true
+                                    type: string
+                                    description: Similar to genre
+                                    example: "rock"
+                                  similarGenre:
+                                    nullable: true
+                                    description: Similar genre
+                                    example: "rnr"
+                            trackToPlay:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/Track'
+                            tracksToPlayWithAds:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: "track"
+                                    description: ???
+                                  track:
+                                    $ref: '#/components/schemas/Track'
+                      generatedPlaylists:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/GeneratedPlaylistLandingBlock"
+                      headlines:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                example: "notification"
+                                description: ???
+                              id:
+                                type: string
+                                example: "notification-vk-not-bound"
+                                description: ???
+                              message:
+                                type: string
+                                example: "vk-not-bound"
+                                description: ???
+  /feed/wizard/is-passed:
+    get:
+      operationId: getFeedWizardState
+      tags:
+        - "Feed"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      isWizardPassed:
+                        type: boolean
+                        example: true
+
+  # Genres
+  /genres:
+    get:
+      operationId: getGenres
+      tags:
+        - 'Genres'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Genre"
+
+  # Albums
+  /albums:
+    get:
+      summary: Get albums by IDs
+      operationId: getAlbumsByIds
+      tags:
+        - "Albums"
+      parameters:
+        - in: query
+          name: "album-ids"
+          description: List of album ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              example: 18837614
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Album"
+  /albums/{albumId}/:
+    parameters:
+      - in: path
+        name: albumId
+        schema:
+          type: number
+        required: true
+        example: 7019818
+    get:
+      operationId: getAlbumById
+      summary: Get album by ID
+      tags:
+        - "Albums"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Album"
+  /albums/{albumId}/with-tracks:
+    parameters:
+      - in: path
+        name: albumId
+        schema:
+          type: number
+        required: true
+        example: 7019818
+    get:
+      summary: Get album with tracks by ID
+      operationId: getAlbumsWithTracks
+      tags:
+        - "Albums"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Album"
+
+  # Tracks
+  /tracks/:
+    get:
+      summary: Get tracks by IDs
+      operationId: getTracksByIds
+      tags:
+        - "Tracks"
+      parameters:
+        - in: query
+          name: "trackIds"
+          description: List of tracks ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              example: 18837614
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Track"
+  /tracks/{trackId}/:
+    parameters:
+      - in: path
+        name: trackId
+        schema:
+          type: number
+        required: true
+        example: 7019818
+    get:
+      operationId: getTrackById
+      summary: Get track by ID
+      tags:
+        - "Tracks"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Track"
+  /tracks/{trackId}/download-info:
+    parameters:
+      - in: path
+        required: true
+        name: trackId
+        schema:
+          type: string
+          example: "78550148"
+    get:
+      operationId: getDownloadInfo
+      summary: Get track download info
+      tags:
+        - "Tracks"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrackDownloadInfo"
+  /tracks/{trackId}/supplement:
+    parameters:
+      - in: path
+        required: true
+        name: trackId
+        schema:
+          type: string
+          example: 32326555
+    get:
+      operationId: getTrackSupplement
+      summary: Track supplement information (Text, video, etc).
+      tags:
+        - "Tracks"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/TrackSupplement"
+  /tracks/{trackId}/similar:
+    parameters:
+      - in: path
+        required: true
+        name: trackId
+        schema:
+          type: string
+          example: 32326555
+    get:
+      operationId: getSimilarTracks
+      summary: Get similar tracks
+      tags:
+        - 'Tracks'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/SimilarTracks"
+  /tracks/{trackId}/lyrics:
+    parameters:
+      - in: path
+        required: true
+        name: trackId
+        schema:
+          type: string
+      - in: query
+        required: true
+        name: format
+        schema:
+          type: string
+          enum: [ "LRC", "TEXT" ]
+      - in: query
+        schema:
+          type: string
+        required: true
+        name: timeStamp
+        description: ??? # TODO
+        example: ???
+      - in: query
+        schema:
+          type: boolean
+        required: true
+        name: sign
+        description: ??? # TODO
+        example: ???
+    get:
+      operationId: getTrackLyrics
+      summary: Get track lyrics
+      responses:
+        200:
+          description: Ok
+      tags:
+        - 'Tracks'
+
+  # Artists
+  /artists/:
+    get:
+      summary: Get artists by IDs
+      operationId: getArtistsByIds
+      tags:
+        - "Artists"
+      parameters:
+        - in: query
+          name: "artistIds"
+          description: List of artists ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              example: 18837614
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ArtistDetailed"
+  /artists/{artistId}/:
+    parameters:
+      - in: path
+        name: artistId
+        schema:
+          type: number
+        required: true
+        example: 7019818
+    get:
+      operationId: getArtistById
+      summary: Get artist by ID
+      tags:
+        - "Artists"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      artist:
+                        $ref: '#/components/schemas/ArtistDetailed'
+                      albums:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Album'
+                      alsoAlbums:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Album'
+                      lastReleaseIds: ## TODO last release ids
+                        type: array
+                      popularTracks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Track'
+                      bandlinkScannerLink: ## TODO
+                        type: object
+                      similarArtists:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Artist'
+                      allCovers:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Cover'
+                      concerts: ## TODO
+                        type: array
+                      videos:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VideoSupplement'
+                      clips: ## TODO
+                        type: array
+                      vinyls: ## TODO
+                        type: array
+                      hasPromotion:
+                        type: boolean
+                        description: ??? ## TODO
+                        example: false
+                      lastReleases: ## TODO
+                        type: array
+                      backgroundVideoUrl:
+                        type: string
+                        description: Background video URL
+                        example: https://strm.yandex.ru/vh-music-videoshots-converted/vod-content/8716080755716743144/mp4/mp4/720x848p.mp4
+                      customWave:
+                        $ref: '#/components/schemas/CustomWave'
+  # TODO /artists/{artistId}/brief-info:
+  /artists/{artistId}/tracks:
+    parameters:
+      - in: path
+        required: true
+        name: artistId
+        schema:
+          type: string
+          example: 218099
+      - in: query
+        required: false
+        name: page
+        schema:
+          type: number
+          example: 0
+      - in: query
+        required: false
+        name: pageSize
+        schema:
+          type: number
+          example: 20
+    get:
+      operationId: getArtistTracks
+      tags:
+        - "Artists"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      pager:
+                        $ref: '#/components/schemas/Pager'
+                      tracks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Track'
+
+  # Playlists
+  /users/{userId}/playlists:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+      - in: query
+        required: true
+        name: kinds
+        schema:
+          type: string
+          example: "1000,1003"
+    get:
+      operationId: getUserPlaylistsByIds
+      summary: Получение плейлистов по идентификаторам
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PlaylistWithTracks"
+  /users/{userId}/playlists/list:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getPlayLists
+      summary: Get user playlists
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Playlist"
+        405:
+          description: "Method Not Allowed"
+          content: { }
+  /users/{userId}/playlists/{kind}:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+      - in: path
+        required: true
+        name: kind
+        description: Playlist ID (kind)
+        schema:
+          type: number
+          example: 1000
+    get:
+      operationId: getPlaylistById
+      summary: Get playlist by user and playlist IDs
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/PlaylistWithTracks"
+  /users/{userId}/playlists/create:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: createPlaylist
+      tags:
+        - "User"
+        - "Playlists"
+      summary: Create new playlist
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - "title"
+                - "visibility"
+              properties:
+                title:
+                  type: string
+                  description: Playlist title
+                  example: 'New playlist'
+                visibility:
+                  $ref: "#/components/schemas/PlaylistVisibilityEnum"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Playlist"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        401:
+          description: Unauthorized
+  /users/{userId}/playlists/{kind}/name:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+      - in: path
+        required: true
+        name: kind
+        description: Playlist ID (kind)
+        schema:
+          type: number
+          example: 1000
+    post:
+      operationId: renamePlaylist
+      summary: Change playlist name
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: string
+                  example: New playlist name
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Playlist"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        401:
+          description: Unauthorized
+  /users/{userId}/playlists/{kind}/visibility:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+      - in: path
+        required: true
+        name: kind
+        description: Playlist ID (kind)
+        schema:
+          type: number
+          example: 1000
+    post:
+      operationId: changePlaylistVisibility
+      summary: Change playlist visibility
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                value:
+                  $ref: "#/components/schemas/PlaylistVisibilityEnum"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Playlist"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        401:
+          description: Unauthorized
+  /users/{userId}/playlists/{kind}/delete:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+      - in: path
+        required: true
+        name: kind
+        description: Playlist ID (kind)
+        schema:
+          type: number
+          example: 1000
+    post:
+      operationId: deletePlaylist
+      summary: Delete playlist
+      tags:
+        - "User"
+        - "Playlists"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        401:
+          description: Unauthorized
+  # TODO /users/{userId}/playlists/{kind}/change-relative:
+  # TODO /users/{userId}/playlists/{kind}/recommendations:
+
+  # Likes
+  /users/{userId}/likes/tracks:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getLikedTracksIds
+      summary: Get tracks marked as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    required: [ library ]
+                    properties:
+                      library:
+                        $ref: "#/components/schemas/TracksList"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+  /users/{userId}/dislikes/tracks:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getDislikedTracksIds
+      summary: Get tracks marked as "Do not recommend"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    required: [ library ]
+                    properties:
+                      library:
+                        $ref: "#/components/schemas/TracksList"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+  /users/{userId}/likes/artists:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getLikedArtists
+      summary: Get artists marked as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artist'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+  /users/{userId}/likes/albums:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getLikedAlbums
+      summary: Get albums marked as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 1379107
+                          description: Album ID
+                        timestamp:
+                          type: string
+                          example: "2023-08-17T21:00:00+00:00"
+                          description: Album liked date
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+  /users/{userId}/likes/playlists:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    get:
+      operationId: getLikedPlaylists
+      summary: Get playlists marked as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        playlist:
+                          $ref: '#/components/schemas/Playlist'
+                        timestamp:
+                          type: string
+                          example: "2023-08-17T21:00:00+00:00"
+                          description: Playlist liked date
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      message:
+                        type: string
+  /users/{userId}/likes/tracks/add-multiple:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: likeTracks
+      summary: Mark track as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "trackIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      revision:
+                        type: number
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/tracks/remove:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: removeLikedTracks
+      summary: Remove track from "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "trackIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/artists/add-multiple:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: likeArtists
+      summary: Mark artist as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "artistIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      revision:
+                        type: number
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/artists/remove:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: removeLikedArtist
+      summary: Remove artist from "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "artistIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/albums/add-multiple:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: likeAlbums
+      summary: Mark album as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "albumIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      revision:
+                        type: number
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/albums/remove:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: removeLikedAlbum
+      summary: Remove albums from "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "albumIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/playlists/add-multiple:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: likePlaylists
+      summary: Mark playlist as "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "playlistIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    type: object
+                    properties:
+                      revision:
+                        type: number
+        401:
+          description: Unauthorized
+          content: { }
+  /users/{userId}/likes/playlists/remove:
+    parameters:
+      - in: path
+        required: true
+        name: userId
+        description: User ID
+        schema:
+          type: number
+          example: 541320800
+    post:
+      operationId: removeLikedPlaylist
+      summary: Remove playlists from "Liked"
+      tags:
+        - "User"
+        - "Likes"
+      security:
+        - oAuth: [ ]
+        - oAuthProxied: [ ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                "playlistIds":
+                  type: array
+                  items:
+                    type: string
+                  example: [ 7019818, 29238706, 83063895 ]
+      responses:
+        200:
+          description: Ok
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+
+  # Search
+  /search:
+    parameters:
+      - in: query
+        name: text
+        required: true
+        description: Search query
+        schema:
+          type: string
+          example: Linkin Park
+      - in: query
+        name: page
+        required: true
+        description: Page number
+        schema:
+          type: number
+          example: 0
+      - in: query
+        name: type
+        required: true
+        schema:
+          $ref: "#/components/schemas/SearchType"
+      - in: query
+        name: nococrrect
+        schema:
+          type: boolean
+          default: false
+    get:
+      tags:
+        - "Search"
+      operationId: "search"
+      summary: Осуществление поиска по запросу и типу, получение результатов
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/Search"
+  /search/suggest:
+    parameters:
+      - in: query
+        name: text
+        required: true
+        description: Search query
+        schema:
+          type: string
+          example: Linkin
+    get:
+      tags:
+        - "Search"
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                required:
+                  - "invocationInfo"
+                  - "result"
+                type: object
+                properties:
+                  invocationInfo:
+                    $ref: "#/components/schemas/InvocationInfo"
+                  result:
+                    $ref: "#/components/schemas/SearchSuggestions"
+
+
+  # TODO /token
+  # TODO /settings
+  # TODO /permission-alerts
+  # TODO /tags/{tagId}/playlist-ids
+  # TODO /landing3
+  # TODO /landing3/{landingBlock}
+  # TODO /landing3/new-releases
+  # TODO /landing3/podcasts
+  # TODO /landing3/new-playlists
+  # TODO /landing3/chart/{chartType}
+  # TODO /play-audio
+  # TODO /rotor/station/{stationId}/info
+  # TODO /rotor/station/{stationId}/tracks
+  # TODO /rotor/account/status
+  # TODO /rotor/stations/list
+  # TODO /rotor/stations/dashboard
+  # TODO /rotor/station/{stationId}/feedback
+  # TODO /non-music/calague
+  # TODO /queues
+  # TODO /queues/{queueId}
+  # TODO /queues/{queueId}/update-position
+
+components:
+  securitySchemes:
+    oAuthProxied:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Specify the token value with the `OAuth` prefix, e.g. "OAuth TOKEN".
+    oAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Specify the token value with the `OAuth` prefix, e.g. "OAuth TOKEN".
+
+  schemas:
+    ## Account
+    AccountStatus:
+      type: object
+      description: Информация о правах пользователя, их изначальных значениях и даты окончания
+      required:
+        - "account"
+        - "permissions"
+      properties:
+        account:
+          $ref: "#/components/schemas/Account"
+        permissions:
+          $ref: "#/components/schemas/Permissions"
+        subscription:
+          $ref: "#/components/schemas/Subscription"
+        subeditor:
+          type: boolean
+          description: Is Yandex.Music editor?
+          example: false
+        subeditorLevel:
+          type: number
+          description: Editor level
+          example: 0
+        pretrialActive:
+          type: boolean
+          description: ???
+          example: false
+        # TODO masterHub
+        plus:
+          type: object
+          description: Yandex.Plus subscription info
+          properties:
+            hasPlus:
+              type: boolean
+              description: Has Yandex.Plus subscription?
+              example: true
+            isTutorialCompleted:
+              description: Is tutorial completed?
+              type: boolean
+              example: true
+        defaultEmail:
+          type: string
+          description: Default account email
+          example: email@yandex.ru
+        userhash:
+          type: string
+          description: User hash
+          example: f8a9049bf30dfb5
+    Account:
+      required:
+        - 'now'
+        - 'region'
+        - 'serviceAvailable'
+      type: object
+      description: General account information
+      properties:
+        now:
+          type: string
+          description: Current date and time
+          example: "2021-03-17T18:13:40+00:00"
+        uid:
+          type: number
+          description: Unique id
+          example: 132111861
+        login:
+          type: string
+          description: Login (part of the email)
+          example: login
+        region:
+          type: number
+          description: Region
+          example: 225
+        fullName:
+          type: string
+          description: Full name
+          example: Doe John
+        secondName:
+          type: string
+          description: Last name
+          example: Doe
+        firstName:
+          type: string
+          description: First name
+          example: John
+        displayName:
+          type: string
+          description: Display name
+          example: John Doe
+        serviceAvailable:
+          type: boolean
+          description: Is service available?
+          example: true
+        hostedUser:
+          type: boolean
+          description: Is hosted user?
+          example: false
+        "passport-phones":
+          type: array
+          description: Mobile phone numbers
+          items:
+            type: object
+            properties:
+              phone:
+                type: string
+                example: +78005553535
+        registeredAt:
+          type: string
+          description: Registration date and time
+          example: 2021-04-05T14:26:22+00:00
+        child:
+          type: boolean
+          description: Is account belongs to child?
+          example: false
+        nonOwnerFamilyMember:
+          type: boolean
+          description: ???
+          example: false
+    Permissions:
+      type: object
+      description: User permissions
+      properties:
+        until:
+          type: string
+          description: Permission due date
+          example: 2023-09-07T18:38:46+00:00
+        values:
+          type: array
+          items:
+            type: string
+            example: play-full-tracks
+        default:
+          type: array
+          items:
+            type: string
+            example: feed-play
+    Subscription:
+      type: object
+      description: User subscriptions (for example Yandex.Plus)
+      properties:
+        hadAnySubscription:
+          type: boolean
+          example: true
+          description: Has subscription?
+        canStartTrial:
+          type: boolean
+          example: false
+          description: Can start trial subscription?
+        mcdonalds:
+          type: boolean
+          description: ???
+          example: false
+        autoRenewable:
+          type: array
+          items:
+            type: object
+            properties:
+              expires:
+                type: string
+                description: Subscription expiration date
+                example: "2023-09-05T01:38:30+03:00"
+              vendor:
+                type: string
+                description: Subscription vendor
+                example: Yandex
+              vendorHelpUrl:
+                type: string
+                description: Vendor URL
+                example: "https://www.yandex.ru/support/music-app/subscription.xml"
+              productId:
+                type: string
+                description: Product Id
+                example: "ru.yandex.plus.kinopoisk.1month.autorenewable.native.web.notrial.269"
+              product:
+                type: object
+                properties:
+                  productId:
+                    type: string
+                    description: Product Id
+                    example: "ru.yandex.plus.kinopoisk.1month.autorenewable.native.web.notrial.269"
+                  type:
+                    type: string
+                    description: Product type
+                    example: "subscription"
+                  commonPeriodDuration:
+                    type: string
+                    description: Common period duration
+                    example: "P30D"
+                  duration:
+                    type: number
+                    description: Duration in days
+                    example: 30
+                  trialDuration:
+                    type: number
+                    description: Trial duration
+                    example: 0
+                  price:
+                    type: object
+                    properties:
+                      amount:
+                        type: number
+                        description: Price amount
+                        example: 269.0
+                      currency:
+                        type: string
+                        description: Price currency
+                        example: "RUB"
+                  family:
+                    type: boolean
+                    description: Is family subscription?
+                    example: true
+                  plus:
+                    type: boolean
+                    description: Is plus subscription?
+                    example: true
+                  feature:
+                    type: string
+                    description: Subscription feature
+                    example: "basic-kinopoisk"
+                  features:
+                    type: array
+                    items:
+                      type: string
+                      example: basic-music
+                  debug:
+                    type: boolean
+                    description: ???
+                    example: false
+              orderId:
+                type: number
+                example: 79432
+                description: Order Id
+              finished:
+                type: boolean
+                example: false
+                description: Is finished subscription?
+        nonAutoRenewableRemainder:
+          type: object
+          properties:
+            days:
+              type: number
+              example: 2
+    AccountSettings:
+      type: object
+      description: Account settings
+      properties:
+        uid:
+          type: number
+          description: User unique ID
+          example: 132111865
+        lastFmScrobblingEnabled:
+          type: boolean
+          description: Is last.fm scrobbline enabled?
+          example: false
+        facebookScrobblingEnabled:
+          type: boolean
+          description: Is Facebook scrobbling enabled?
+          example: false
+        shuffleEnabled:
+          type: boolean
+          description: Is shuffle enabled?
+          example: false
+        addNewTrackOnPlaylistTop:
+          type: boolean
+          description: Should add new track to the top of the playlist?
+          example: false
+        volumePercents:
+          type: boolean
+          description: Volume level in percents
+          example: 75
+        userMusicVisibility:
+          $ref: "#/components/schemas/VisibilityEnum"
+        userSocialVisibility:
+          $ref: "#/components/schemas/VisibilityEnum"
+        adsDisabled:
+          type: boolean
+          description: Is ads disabled?
+          example: true
+        modified:
+          type: string
+          description: Time when setting were modified?
+          example: "2023-07-25T20:17:13Z"
+        rbtDisabled:
+          description: ???
+          type: string
+          example: false
+        theme:
+          type: string
+          enum:
+            - "black"
+            - "default"
+          description: UI theme
+          example: "black"
+        promosDisabled:
+          type: boolean
+          description: Is promo disabled?
+          example: true
+        autoPlayRadio:
+          type: boolean
+          description: Should auto play radio when playlist ends?
+          example: true
+        syncQueueEnabled:
+          type: boolean
+          description: ???
+          example: false
+        explicitForbidden:
+          type: boolean
+          description: Should explicit content be forbidden?
+          example: false
+        childModEnabled:
+          type: boolean
+          description: Is child mode enabled?
+          example: false
+
+    ## Playlist
+    GeneratedPlaylist:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Playlist type
+          example: "recentTracks"
+        ready:
+          type: boolean
+          description: Is playlist ready?
+          example: true
+        notify:
+          type: boolean
+          description: ???
+          example: true
+        data:
+          $ref: '#/components/schemas/PlaylistWithTracks'
+    Playlist:
+      type: object
+      required:
+        - owner
+        - playlistUuid
+        - uid
+        - kind
+        - title
+        - revision
+        - snapshot
+        - trackCount
+        - visibility
+        - created
+        - modified
+      properties:
+        owner:
+          $ref: "#/components/schemas/UserInfo"
+        playlistUuid:
+          type: string
+          example: "40dcf55e-f01d-0bb4-b4fe-6a5d7873b394"
+          description: Playlist UUID
+        available:
+          type: boolean
+          example: true
+          description: Is playlist available?
+        uid:
+          type: number
+          example: 692529388
+          description: Playlist UID (this is User ID)
+        kind:
+          type: number
+          example: 118242949
+          description: Playlsit kind
+        title:
+          type: string
+          example: "Premiere"
+          description: Playlist title
+        description:
+          type: string
+          example: "Some new tracks"
+          description: Playlist description
+        descriptionFormatted:
+          type: string
+          example: "Some new tracks"
+          description: Playlist formatted description
+        revision:
+          type: number
+          example: 4
+          description: Playlist revision
+        snapshot:
+          type: number
+          example: 20
+          description: Playlist snapshot
+        trackCount:
+          type: number
+          example: 65
+          description: Playlist track count
+        visibility:
+          $ref: "#/components/schemas/PlaylistVisibilityEnum"
+        collective:
+          type: boolean
+          example: false
+          description: Is collective playlist?
+        created:
+          type: string
+          example: "2020-01-29T20:55:10+00:00"
+          description: Playlist creation date
+        modified:
+          type: string
+          example: "2020-01-29T20:55:10+00:00"
+          description: Playlist modified date
+        isBanner:
+          type: boolean
+          example: false
+          description: ???
+        isPremiere:
+          type: boolean
+          example: false
+          description: ???
+        idForFrom:
+          type: string
+          example: "recent_tracks"
+          description: ???
+        everPlayed:
+          type: boolean
+          example: false
+          description: Is playlist ever played?
+        coverWithoutText:
+          $ref: '#/components/schemas/Cover'
+        urlPart:
+          type: string
+          example: "premiere"
+          description: ???
+        durationMs:
+          type: number
+          example: 3559530
+          description: Playlist duration in milliseconds
+        cover:
+          $ref: '#/components/schemas/Cover'
+        ogImage:
+          type: string
+          example: "avatars.yandex.net/get-music-user-playlist/27701/r5ldflDECdDDfO/%%"
+          description: Playlist OpenGraph image URL
+        tags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ???
+                example: ???
+              value:
+                type: string
+                description: ???
+                example: ???
+        madeFor:
+          type: object
+          properties:
+            userInfo:
+              $ref: '#/components/schemas/UserInfo'
+            caseForms:
+              type: object # TODO Case forms
+        generatedPlaylistType:
+          type: string
+          description: Generated playlist type
+          example: "recentTracks"
+        backgroundVideoUrl:
+          type: string
+          description: Background video URL
+          example: "https://strm.yandex.ru/vh-music-videoshots-converted/vod-content/456356364327116259/mp4/mp4/720x968p.mp4"
+        backgroundImageUrl:
+          type: string
+          description: Background image URL
+          example: "avatars.yandex.net/get-music-user-playlist/69910/RECENT_TRACKS.rnd-1251314265.personal-playlist-branding/%%"
+        customWave:
+          $ref: '#/components/schemas/CustomWave'
+        lastOwnerPlaylists:
+          type: array
+          items:
+            $ref: '#/components/schemas/Playlist'
+    PlaylistWithTracks:
+      allOf:
+        - $ref: '#/components/schemas/Playlist'
+        - type: object
+          properties:
+            tracks:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 1235412
+                    description: Track ID
+                  albumId:
+                    type: string
+                    example: 1235412
+                    description: Track album ID
+                  timestamp:
+                    type: string
+                    example: "2023-08-17T21:00:00+00:00"
+                    description: Track added to playlist date and time
+            likesCount:
+              type: number
+              example: 1
+              description: Playlist likes count
+            pager:
+              $ref: '#/components/schemas/Pager'
+    PlaylistVisibilityEnum:
+      type: string
+      description: Playlist visibility
+      enum:
+        - "private"
+        - "public"
+      example: "private"
+
+    ## Track
+    Track:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "115539285"
+          description: Track ID
+        realId:
+          type: string
+          example: "115539285"
+          description: Track real ID
+        title:
+          type: string
+          example: "Walking Away"
+          description: Track title
+        contentWarning:
+          nullable: true
+          example: "explicit"
+          description: Track content warning
+        trackSource:
+          type: string
+          example: "OWN"
+          description: Track source
+        major:
+          type: object
+          properties:
+            id:
+              type: number
+              example: 131
+              description: Track major ID
+            name:
+              type: string
+              example: "TUNECORE"
+              description: Track major name
+        available:
+          type: boolean
+          description: Is track available?
+          example: true
+        availableForPremiumUsers:
+          type: boolean
+          description: ???
+          example: false
+        availableFullWithoutPermission:
+          type: boolean
+          description: ???
+          example: false
+        disclaimers:
+          type: array # TODO
+        availableForOptions:
+          type: array
+          items:
+            type: string
+            example: 'bookmate'
+        durationMs:
+          type: number
+          example: 421421
+          description: Track duration in milliseconds
+        storageDir:
+          type: string
+          example: ""
+          description: ???
+        fileSize:
+          type: number
+          example: 0
+          description: ???
+        r128:
+          type: object
+          properties:
+            i:
+              type: number
+              example: -7.72
+            tp:
+              type: number
+              example: 1.69
+        fade:
+          type: object
+          properties:
+            inStart:
+              type: number
+              example: 0.1
+            inStop:
+              type: number
+              example: 1.0
+            outStart:
+              type: number
+              example: 190.8
+            outStop:
+              type: number
+              example: 195.5
+        previewDurationMs:
+          type: number
+          example: 30000
+          description: Track preview duration in milliseconds
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        albums:
+          type: array
+          items:
+            - $ref: "#/components/schemas/AlbumWithTrackPosition"
+        coverUri:
+          description: Cover uri template
+          type: string
+          example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
+        ogImage:
+          nullable: true
+          type: string
+          description: OpenGraph image URL
+          example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
+        lyricsAvailable:
+          type: boolean
+          description: Is lyrics available?
+          example: true
+        lyricsInfo:
+          type: object
+          properties:
+            hasAvailableSyncLyrics:
+              type: boolean
+              example: false
+              description: Has synced lyrics?
+            hasAvailableTextLyrics:
+              type: boolean
+              example: false
+              description: Has text lyrics?
+        type:
+          type: string
+          example: "music"
+          description: Track type
+        rememberPosition:
+          type: boolean
+          example: false
+          description: ???
+        trackSharingFlag:
+          type: string
+          example: "COVER_ONLY" # VIDEO_ALLOWED
+          description: ???
+    TrackInAlbum:
+      allOf:
+        - $ref: '#/components/schemas/Album'
+        - type: object
+          properties:
+            best:
+              type: boolean
+              description: Is best album track?
+              example: true
+    TracksList:
+      type: object
+      description: List of tracks
+      required: [ uid, revisions, tracks ]
+      properties:
+        uid:
+          type: number
+          example: 132111868
+          description: User ID
+        revisions:
+          type: number
+          example: 142
+          description: Revision
+        tracks:
+          type: array
+          description: Список треков в укороченной версии
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: 14582935
+                description: Track ID
+              albumId:
+                type: string
+                example: 14582935
+                description: Track album ID
+              timestamp:
+                type: string
+                example: "2023-08-17T21:00:00+00:00"
+                description: Track added to playlist date and time
+    TrackDownloadInfo:
+      type: object
+      description: Track download URLs
+      required: [ codec, gain, preview, downloadInfoUrl, direct, bitrateInKbps ]
+      properties:
+        codec:
+          type: string
+          enum: [ mp3, aac ]
+          description: Audiofile codec
+          example: "mp3"
+        gain:
+          type: boolean
+          description: Gain
+          example: false
+        preview:
+          type: string
+          description: Предварительный просмотр
+          example: false
+        downloadInfoUrl:
+          type: string
+          description: URL to XML document to download track
+          example: "https://storage.mds.yandex.net/file-download-info/51062_2dca0e10.65102889.12.43526392/2?sign=79370c1c920be40e37c0cb938590886121a8697b6e1440ed65e1977930064331&ts=6511e1d0&offset=31535"
+        direct:
+          type: boolean
+          description: Is direct URL?
+          example: false
+        bitrateInKbps:
+          type: number
+          description: Bitrate
+          example: 320
+    TrackSupplement:
+      type: object
+      description: Track additional information
+      properties:
+        id:
+          type: number
+          description: Unique ID
+        lyrics:
+          $ref: "#/components/schemas/Lyrics"
+        videos:
+          $ref: "#/components/schemas/VideoSupplement"
+        radioIsAvailable:
+          type: boolean
+          description: Is radio available?
+        description:
+          type: string
+          description: Description text
+    Lyrics:
+      type: object
+      description: текст трека
+      properties:
+        id:
+          type: number
+          description: Lyrics unique ID
+        lyrics:
+          type: string
+          description: Lyrics
+        hasRights:
+          type: boolean
+          description: Has rights?
+        fullLyrics:
+          type: string
+          description: Full lyrics
+        textLanguage:
+          type: string
+          description: Lyrics language
+        showTranslation:
+          type: boolean
+          description: Is translation available?
+        url:
+          type: string
+          description: URL to lyrics
+    SimilarTracks:
+      type: object
+      description: Similar tracks list
+      properties:
+        track:
+          $ref: "#/components/schemas/Track"
+        similarTracks:
+          type: array
+          description: Similar tracks
+          items:
+            $ref: "#/components/schemas/Track"
+
+    ## Artist
+    Artist:
+      type: object
+      properties:
+        id:
+          description: Artist ID
+          oneOf:
+            - type: string
+              example: "9262"
+            - type: number
+              example: 9262
+        name:
+          type: string
+          description: Artist name
+          example: "Nirvana"
+        various:
+          type: boolean
+          example: false
+          description: ???
+        composer:
+          type: boolean
+          example: false
+          description: ???
+        cover:
+          $ref: "#/components/schemas/Cover"
+        genres:
+          type: array
+          description: Artist genres
+          items:
+            type: string
+            example: "indie"
+        counts:
+          required: false
+          type: object
+          properties:
+            tracks:
+              type: number
+              example: 56
+              description: Artist tracks count
+            directAlbums:
+              type: number
+              example: 15
+              description: Artist direct albums
+            alsoAlbums:
+              type: number
+              example: 42
+              description: Artist also albums
+            alsoTracks:
+              type: number
+              example: 13
+              description: Artst also tracks
+        disclaimers: ## TODO disclaimers
+          type: array
+          items:
+            type: object
+    ArtistDetailed:
+      allOf:
+        - $ref: '#/components/schemas/Artist'
+        - type: object
+          properties:
+            ogImage:
+              required: false
+              type: string
+              example: "avatars.yandex.net/get-music-content/33216/70de5aff.a.2015106-1/%%"
+              description: OpenGraph image
+            ratings:
+              type: object
+              properties:
+                week:
+                  type: number
+                  example: 23543
+                  description: Artist week rating
+                month:
+                  type: number
+                  example: 24234
+                  description: Artist month rating
+                day:
+                  type: number
+                  example: 23429
+                  description: Artist day rating
+            links:
+              type: array
+              items:
+                type: object
+                required:
+                  - title
+                  - href
+                  - type
+                properties:
+                  title:
+                    type: string
+                    example: "banksandsteelz.com"
+                    description: Link title
+                  href:
+                    type: string
+                    example: "http://www.banksandsteelz.com/"
+                    description: Link href
+                  type:
+                    type: string
+                    example: "official" # social
+                    description: "Link type"
+                  socialNetwork:
+                    nullable: true
+                    type: string
+                    example: "twitter"
+                    description: "Social network type"
+            ticketsAvailable:
+              type: boolean
+              example: false
+              description: Artist tickets available?
+    
+    ## Album
+    Album:
+      type: object
+      properties:
+        id:
+          required: true
+          type: number
+          description: Album ID
+          example: 4878066
+        title:
+          required: true
+          type: string
+          description: Album title
+          example: "Hollywood Rock Festival, Rio De Janeiro, Brazil, January 23rd, 1993"
+        "type":
+          nullable: true
+          description: Album type
+          type: string
+          enum: [ "single", "podcast", "audiobook" ]
+        metaType:
+          nullable: true
+          description: Album meta type
+          type: string
+          enum: [ "single", "podcast", "music" ]
+        contentWarning:
+          nullable: true
+          type: string
+          example: "explicit"
+          description: Album content warning
+        releaseDate:
+          type: string
+          example: "2023-08-16T00:00:00+03:00"
+          description: Album release date
+          nullable: true
+        year:
+          type: number
+          example: 2023
+          description: Album year
+          nullable: true
+        coverUri:
+          nullable: true
+          description: Cover uri template
+          type: string
+          example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
+        ogImage:
+          nullable: true
+          type: string
+          description: OpenGraph image URL
+          example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
+        genre:
+          type: string
+          description: Album genre
+          example: "rock"
+        trackCount:
+          type: number
+          description: Album track count
+          example: 24
+        likesCount:
+          type: number
+          required: false
+          nullable: true
+          description: Album likes count
+          example: 12324
+        recent:
+          type: boolean
+          description: Is recent album
+          example: false
+        veryImportant:
+          type: boolean
+          description: ???
+          example: false
+        artists:
+          required: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        labels:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 2344
+                description: Label ID
+              name:
+                type: string
+                example: "RR Live"
+                description: Label name
+        available:
+          type: boolean
+          description: Is track available?
+          example: true
+        availableForPremiumUsers:
+          type: boolean
+          description: ???
+          example: false
+        disclaimers:
+          type: array # TODO
+        availableForMobile:
+          type: boolean
+          description: ???
+          example: false
+        availablePartially:
+          type: boolean
+          description: ???
+          example: false
+        availableForOptions:
+          type: array
+          description: ???
+          items:
+            type: string
+            example: 'bookmate'
+        bests:
+          required: true
+          description: Best track IDs
+          type: array
+          items:
+            type: number
+        duplicates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        error:
+          description: Error message
+          type: string
+          nullable: true
+    AlbumWithTrackPosition:
+      allOf:
+        - $ref: '#/components/schemas/Album'
+        - type: object
+          properties:
+            trackPosition:
+              type: object
+              properties:
+                volume:
+                  type: number
+                  example: 1
+                index:
+                  type: number
+                  example: 13
+    AlbumWithTracks:
+      allOf:
+        - $ref: '#/components/schemas/Album'
+        - type: object
+          properties:
+            volumes:
+              type: array
+              items:
+                type: array
+                items:
+                  - $ref: '#/components/schemas/TrackInAlbum'
+
+    ## User
+    UserInfo:
+      type: object
+      properties:
+        uid:
+          type: number
+          example: 1234
+          description: User id
+        login:
+          type: string
+          example: "yandex-premiere"
+          description: User login
+        name:
+          type: string
+          example: "yamusic-premiere"
+          description: User name
+        sex:
+          $ref: '#/components/schemas/SexEnum'
+        verified:
+          type: boolean
+          description: Is user verified?
+          example: true
+
+    ## Genre
+    Genre:
+      type: object
+      required:
+        - "id"
+        - "weight"
+        - "composerTop"
+        - "title"
+        - "titles"
+        - "images"
+        - "showInMenu"
+      properties:
+        id:
+          description: Genre id
+          type: string
+          example: "all"
+        weight:
+          description: ???
+          type: number
+          example: 2
+        composerTop:
+          type: boolean
+          example: false
+          description: ???
+        title:
+          description: Genre title
+          type: string
+          example: "Music for all genres"
+        titles:
+          description: Title on different languages
+          type: object
+          additionalProperties:
+            type: object
+            required:
+              - "title"
+              - "fullTitle"
+            properties:
+              title:
+                type: string
+                example: "Her türden müzik"
+              fullTitle:
+                type: string
+                example: "Tüm müzik tarzları"
+        images:
+          description: Genre images
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            "208x208": "http://avatars.mds.yandex.net/get-music-misc/29541/metagenre-other-x208/orig"
+            "300x300": "http://avatars.mds.yandex.net/get-music-misc/49997/metagenre-other-x300/orig"
+        showInMenu:
+          description: Show in menu
+          type: boolean
+          example: false
+        showInRegions:
+          description: List of regions where genre shown
+          type: array
+          items:
+            type: number
+            example: 255
+        fullTitle:
+          description: Genre full title
+          type: string
+          example: "All Genres Music"
+        urlPart:
+          description: Part of URL ???
+          type: string
+          example: "rock-n-roll"
+        color:
+          description: Genre color
+          type: string
+          example: "#ff6665"
+        radioIcon:
+          $ref: "#/components/schemas/Icon"
+        subGenres:
+          type: array
+          items:
+            $ref: "#/components/schemas/Genre"
+        hideInRegions:
+          description: Genre should be hidden in regions
+          type: array
+          items:
+            type: number
+            example: 255
+
+    ## Search
+    SearchType:
+      type: string
+      enum: [ "artist", "album", "track", "podcast", "all", "playlist" ]
+      default: "all"
+    BaseSearchResult:
+      type: object
+      required:
+        - "type"
+        - "total"
+        - "perPage"
+        - "order"
+      properties:
+        type:
+          type: string
+          description: Result type
+          example: "playlist"
+        total:
+          type: number
+          description: Total items
+          example: 100
+        page:
+          type: number
+          description: Page number
+          example: 1
+        perPage:
+          type: number
+          description: Items per page
+          example: 10
+        order:
+          type: number
+          description: Block update-position
+          example: 1
+    Search:
+      type: object
+      description: Search results
+      properties:
+        searchResultId:
+          type: string
+          description: Search result ID
+        text:
+          type: string
+          description: Query text
+        best:
+          $ref: "#/components/schemas/SearchBest"
+        albums:
+          description: Found albums
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Album"
+        artists:
+          description: Found artists
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Artist"
+        playlists:
+          description: Found playlists
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Playlist"
+        tracks:
+          description: Found tracks
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Track"
+        videos:
+          description: Found videos
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Video"
+        podcasts:
+          description: Found podcasts
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    type: object
+        podcast_episodes:
+          description: Found podcast episodes
+          allOf:
+            - $ref: "#/components/schemas/BaseSearchResult"
+            - type: object
+              required: [ results ]
+              properties:
+                results:
+                  type: array
+                  items:
+                    type: object
+        type:
+          $ref: "#/components/schemas/SearchType"
+        page:
+          type: number
+          description: Current page. Available if type specified in query.
+        perPage:
+          type: number
+          description: Items per page. Available if type specified in query.
+        misspellCorrected:
+          type: boolean
+          description: Is misspelled?
+        misspellOriginal:
+          type: string
+          description: Original query
+        nocorrect:
+          type: boolean
+          description: Is misspell enabled?
+    SearchBest:
+      type: object
+      description: Best search result
+      properties:
+        type:
+          type: string
+          description: Type of best match
+        text:
+          type: string
+        result:
+          oneOf:
+            - $ref: "#/components/schemas/Track"
+            - $ref: "#/components/schemas/Artist"
+            - $ref: "#/components/schemas/Album"
+            - $ref: "#/components/schemas/Playlist"
+            - $ref: "#/components/schemas/Video"
+    SearchSuggestions:
+      type: object
+      description: Suggestion for search
+      properties:
+        best:
+          type: object
+        suggestions:
+          type: array
+          items:
+            type: string
+
+    ## Landing
+    GeneratedPlaylistLandingBlock:
+      type: object
+      required: [ notify, ready, type, data ]
+      properties:
+        notify:
+          type: boolean
+        ready:
+          type: boolean
+        type:
+          type: string
+          enum: [ playlistOfTheDay ]
+        data:
+          $ref: "#/components/schemas/GeneratedPlaylist"
+
+    ## Common
+    SexEnum:
+      type: string
+      enum:
+        - "male"
+        - "female"
+        - "unknown"
+      example: "male"
+    VisibilityEnum:
+      type: string
+      enum:
+        - "PRIVATE"
+        - "PUBLIC"
+      example: "PUBLIC"
+    InvocationInfo:
+      type: object
+      required:
+        - "exec-duration-millis"
+        - "hostname"
+        - "req-id"
+      properties:
+        "exec-duration-millis":
+          type: number
+        hostname:
+          type: string
+        "req-id":
+          type: string
+        "app-name":
+          example: music-play-queue
+          type: string
+    Error:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "validate"
+        message:
+          type: string
+          example: "Parameters requirements are not met"
+    Cover:
+      type: object
+      properties:
+        type:
+          required: false
+          type: string
+          example: "pic" # "from-artist-photos", "mosaic"
+          description: Cover type
+        prefix:
+          required: false
+          type: string
+          example: "06f54371.p.9262/"
+          description: ???
+        dir:
+          required: false
+          type: string
+          example: "/get-music-user-playlist/69910/r5llgef680m3Ux/"
+          description: Exists when type = "pic"
+        itemsUri:
+          required: false
+          type: array
+          items:
+            type: string
+          description: Exists when type = "mosaic"
+        version:
+          required: false
+          type: string
+          example: "1641992415603"
+          description: ???
+        uri:
+          required: false
+          type: string
+          example: "avatars.yandex.net/get-music-user-playlist/69910/r5llgef680m3Ux/%%?1641992415603"
+          description: ???
+        custom:
+          required: false
+          type: boolean
+          example: false
+          description: ???
+        error:
+          type: string
+          required: false
+          example: cover doesn't exist
+          description: Error message
+    Icon:
+      type: object
+      required:
+        - "backgroundColor"
+        - "imageUrl"
+      properties:
+        backgroundColor:
+          type: string
+          example: "#3779bc"
+        imageUrl:
+          type: string
+          example: "avatars.yandex.net/get-music-misc/34161/rotor-genre-rusrock-icon/%%"
+    Pager:
+      type: object
+      properties:
+        total:
+          type: number
+          example: 33
+          description: Total count
+        page:
+          type: number
+          example: 0
+          description: Current page
+        perPage:
+          type: number
+          example: 33
+          description: Items per page
+    CustomWave:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "2023: Best"
+          description: Custom wave title
+        animationUrl:
+          type: string
+          example: "https://music-custom-wave-media.s3.yandex.net/base.json"
+          description: URL to animation JSON
+        position:
+          type: string
+          description: Wave position
+          example: "default"
+        header:
+          type: string
+          example: "My wave by playlist"
+          description: Custom wave header
+    BadRequest:
+      type: object
+      properties:
+        invocationInfo:
+          $ref: "#/components/schemas/InvocationInfo"
+        error:
+          $ref: "#/components/schemas/Error"
+    VideoSupplement:
+      type: object
+      description: Video clip
+      properties:
+        cover:
+          type: string
+          description: URL for cover
+        provider:
+          type: string
+          description: Video service
+        title:
+          type: string
+          description: Video title
+        providerVideoId:
+          type: string
+          description: Video ID
+        url:
+          type: string
+          description: Video URL
+        embedUrl:
+          type: string
+          description: Video URL on Yandex
+        embed:
+          type: string
+          description: HTML tag for embed
+    Video:
+      type: object
+      description: Video
+      properties:
+        title:
+          type: string
+          description: Video title
+        cover:
+          type: string
+          description: Cover URL
+        embedUrl:
+          type: string
+          description: Video URL
+        provider:
+          type: string
+          description: Video provider
+        providerVideoId:
+          type: string
+          description: Video unique ID for provider
+        youtubeUrl:
+          type: string
+          description: URL to YouTube
+        thumbnailUrl:
+          type: string
+          description: Thumbnail URL
+        duration:
+          type: number
+          description: Video length in seconds
+        text:
+          type: string
+          description: Text
+        htmlAutoPlayVideoPlayer:
+          type: string
+          description: HTML tag for embed
+        regions:
+          type: array
+          items:
+            type: string
+          example: [ "RUSSIA_PREMIUM", "RUSSIA" ]
