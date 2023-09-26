@@ -1,9 +1,10 @@
 'use client';
+
 import React from 'react';
-import { API } from '@stoplight/elements';
+import { RedocStandalone } from 'redoc';
 
 const OpenApi: React.FC = () => {
-  return <API apiDescriptionUrl="/yamusic-api.yaml" />;
+  return <RedocStandalone specUrl={'/yamusic-api.yaml'} />;
 };
 
 export default OpenApi;

@@ -659,7 +659,7 @@ paths:
         - oAuthProxied: [ ]
       responses:
         200:
-          description: Ok
+          description: Return list of artists with specified IDs
           content:
             application/json:
               schema:
@@ -672,12 +672,14 @@ paths:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
                     type: array
+                    description: List of artist detailed information
                     items:
                       $ref: "#/components/schemas/ArtistDetailed"
   /artists/{artistId}/:
     parameters:
       - in: path
         name: artistId
+        description: Artist ID
         schema:
           type: number
         required: true
@@ -689,7 +691,7 @@ paths:
         - "Artists"
       responses:
         200:
-          description: Ok
+          description: Detailed artist information
           content:
             application/json:
               schema:
@@ -702,83 +704,116 @@ paths:
                     $ref: "#/components/schemas/InvocationInfo"
                   result:
                     type: object
+                    description: Artist detailed information, albums, popular tracks, etc...
                     properties:
                       artist:
                         $ref: '#/components/schemas/ArtistDetailed'
                       albums:
+                        description: List of artist's albums
                         type: array
                         items:
                           $ref: '#/components/schemas/Album'
                       alsoAlbums:
+                        description: List of artist's other albums
                         type: array
                         items:
                           $ref: '#/components/schemas/Album'
                       lastReleaseIds: ## TODO last release ids
                         type: array
+                        description: TODO
+                        items:
+                          type: object
                       popularTracks:
                         type: array
+                        description: List of artist's most popular tracks
                         items:
                           $ref: '#/components/schemas/Track'
                       bandlinkScannerLink: ## TODO
                         type: object
+                        description: TODO
                       similarArtists:
                         type: array
+                        description: List of artists similar to source artist
                         items:
                           $ref: '#/components/schemas/Artist'
                       allCovers:
                         type: array
+                        description: List of all artist covers
                         items:
                           $ref: '#/components/schemas/Cover'
                       concerts: ## TODO
                         type: array
+                        description: TODO
+                        items:
+                          type: object
                       videos:
                         type: array
+                        description: List of artist's videos
                         items:
                           $ref: '#/components/schemas/VideoSupplement'
                       clips: ## TODO
                         type: array
+                        description: TODO
+                        items:
+                          type: object
                       vinyls: ## TODO
                         type: array
+                        description: TODO
+                        items:
+                          type: object
                       hasPromotion:
                         type: boolean
                         description: ??? ## TODO
                         example: false
                       lastReleases: ## TODO
                         type: array
+                        description: TODO
+                        items:
+                          type: object
                       backgroundVideoUrl:
                         type: string
                         description: Background video URL
                         example: https://strm.yandex.ru/vh-music-videoshots-converted/vod-content/8716080755716743144/mp4/mp4/720x848p.mp4
                       customWave:
                         $ref: '#/components/schemas/CustomWave'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
   # TODO /artists/{artistId}/brief-info:
   /artists/{artistId}/tracks:
     parameters:
       - in: path
         required: true
         name: artistId
+        description: Artist ID
         schema:
           type: string
           example: 218099
       - in: query
         required: false
         name: page
+        description: Page number
         schema:
           type: number
           example: 0
       - in: query
         required: false
         name: pageSize
+        description: Page size
         schema:
           type: number
           example: 20
     get:
+      summary: Get artist's tracks
       operationId: getArtistTracks
       tags:
         - "Artists"
       responses:
         200:
-          description: Ok
+          description: List of artist's tracks
           content:
             application/json:
               schema:
@@ -796,6 +831,7 @@ paths:
                         $ref: '#/components/schemas/Pager'
                       tracks:
                         type: array
+                        description: List of tracks
                         items:
                           $ref: '#/components/schemas/Track'
 
@@ -2431,6 +2467,8 @@ components:
           example: false
         disclaimers:
           type: array # TODO
+          items:
+            type: string
         availableForOptions:
           type: array
           items:
@@ -2483,7 +2521,7 @@ components:
         albums:
           type: array
           items:
-            - $ref: "#/components/schemas/AlbumWithTrackPosition"
+            $ref: "#/components/schemas/AlbumWithTrackPosition"
         coverUri:
           description: Cover uri template
           type: string
@@ -2646,7 +2684,10 @@ components:
 
     ## Artist
     Artist:
+      description: Artist basic information
       type: object
+      required:
+        - id
       properties:
         id:
           description: Artist ID
@@ -2662,11 +2703,11 @@ components:
         various:
           type: boolean
           example: false
-          description: ???
+          description: ??? # TODO
         composer:
           type: boolean
           example: false
-          description: ???
+          description: ??? # TODO
         cover:
           $ref: "#/components/schemas/Cover"
         genres:
@@ -2676,8 +2717,8 @@ components:
             type: string
             example: "indie"
         counts:
-          required: false
           type: object
+          description: Track, albums and other counts
           properties:
             tracks:
               type: number
@@ -2697,20 +2738,32 @@ components:
               description: Artst also tracks
         disclaimers: ## TODO disclaimers
           type: array
+          description: ??? # TODO
           items:
             type: object
+        error:
+          type: string
+          example: "not-found"
+          description: Error type
+        dbAliases:
+          type: array
+          description: List of database aliases
+          items:
+            type: string
+            example: "Нирвана"
     ArtistDetailed:
+      description: Artist detailed information
       allOf:
         - $ref: '#/components/schemas/Artist'
         - type: object
           properties:
             ogImage:
-              required: false
               type: string
               example: "avatars.yandex.net/get-music-content/33216/70de5aff.a.2015106-1/%%"
               description: OpenGraph image
             ratings:
               type: object
+              description: Daily, weekly and monthly ratings
               properties:
                 week:
                   type: number
@@ -2726,6 +2779,7 @@ components:
                   description: Artist day rating
             links:
               type: array
+              description: Links to the artist
               items:
                 type: object
                 required:
@@ -2746,7 +2800,6 @@ components:
                     example: "official" # social
                     description: "Link type"
                   socialNetwork:
-                    nullable: true
                     type: string
                     example: "twitter"
                     description: "Social network type"
@@ -2754,33 +2807,33 @@ components:
               type: boolean
               example: false
               description: Artist tickets available?
-    
+
     ## Album
     Album:
+      description: Album infromation
       type: object
+      required:
+        - id
+        - title
+        - type
       properties:
         id:
-          required: true
           type: number
           description: Album ID
           example: 4878066
         title:
-          required: true
           type: string
           description: Album title
           example: "Hollywood Rock Festival, Rio De Janeiro, Brazil, January 23rd, 1993"
         "type":
-          nullable: true
           description: Album type
           type: string
           enum: [ "single", "podcast", "audiobook" ]
         metaType:
-          nullable: true
           description: Album meta type
           type: string
           enum: [ "single", "podcast", "music" ]
         contentWarning:
-          nullable: true
           type: string
           example: "explicit"
           description: Album content warning
@@ -2788,19 +2841,15 @@ components:
           type: string
           example: "2023-08-16T00:00:00+03:00"
           description: Album release date
-          nullable: true
         year:
           type: number
           example: 2023
           description: Album year
-          nullable: true
         coverUri:
-          nullable: true
           description: Cover uri template
           type: string
           example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
         ogImage:
-          nullable: true
           type: string
           description: OpenGraph image URL
           example: "avatars.yandex.net/get-music-content/5503671/b1c9e4ba.a.26614305-1/%%"
@@ -2814,25 +2863,24 @@ components:
           example: 24
         likesCount:
           type: number
-          required: false
-          nullable: true
           description: Album likes count
           example: 12324
         recent:
           type: boolean
-          description: Is recent album
+          description: Is album recently released?
           example: false
         veryImportant:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         artists:
-          required: true
           type: array
+          description: List of artists in this album
           items:
             $ref: '#/components/schemas/Artist'
         labels:
           type: array
+          description: List of labels
           items:
             type: object
             properties:
@@ -2850,63 +2898,71 @@ components:
           example: true
         availableForPremiumUsers:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         disclaimers:
           type: array # TODO
+          items:
+            type: string
         availableForMobile:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         availablePartially:
           type: boolean
-          description: ???
+          description: ??? # TODO
           example: false
         availableForOptions:
           type: array
-          description: ???
+          description: ??? # TODO
           items:
             type: string
             example: 'bookmate'
         bests:
-          required: true
-          description: Best track IDs
+          description: List of best album track IDs
           type: array
           items:
             type: number
         duplicates:
+          description: List of duplicates of this album
           type: array
           items:
             $ref: '#/components/schemas/Album'
         error:
           description: Error message
           type: string
-          nullable: true
     AlbumWithTrackPosition:
+      description: Album information and track position. (Used in Track)
       allOf:
         - $ref: '#/components/schemas/Album'
         - type: object
           properties:
             trackPosition:
+              description: Track position in album
               type: object
               properties:
                 volume:
+                  description: Album volume
                   type: number
                   example: 1
                 index:
+                  description: Position in volume
                   type: number
                   example: 13
     AlbumWithTracks:
+      description: Album with tracks
       allOf:
         - $ref: '#/components/schemas/Album'
         - type: object
           properties:
             volumes:
+              description: List of album volume
               type: array
               items:
                 type: array
+                description: List of tracks in volume
                 items:
-                  - $ref: '#/components/schemas/TrackInAlbum'
+                  $ref: '#/components/schemas/TrackInAlbum'
 
     ## User
     UserInfo:
@@ -3214,6 +3270,7 @@ components:
       example: "PUBLIC"
     InvocationInfo:
       type: object
+      description: Invocation info from API
       required:
         - "exec-duration-millis"
         - "hostname"
@@ -3238,47 +3295,40 @@ components:
           type: string
           example: "Parameters requirements are not met"
     Cover:
+      description: Cover image information
       type: object
       properties:
         type:
-          required: false
           type: string
           example: "pic" # "from-artist-photos", "mosaic"
           description: Cover type
         prefix:
-          required: false
           type: string
           example: "06f54371.p.9262/"
           description: ???
         dir:
-          required: false
           type: string
           example: "/get-music-user-playlist/69910/r5llgef680m3Ux/"
           description: Exists when type = "pic"
         itemsUri:
-          required: false
           type: array
           items:
             type: string
           description: Exists when type = "mosaic"
         version:
-          required: false
           type: string
           example: "1641992415603"
           description: ???
         uri:
-          required: false
           type: string
           example: "avatars.yandex.net/get-music-user-playlist/69910/r5llgef680m3Ux/%%?1641992415603"
           description: ???
         custom:
-          required: false
           type: boolean
           example: false
           description: ???
         error:
           type: string
-          required: false
           example: cover doesn't exist
           description: Error message
     Icon:
@@ -3294,6 +3344,7 @@ components:
           type: string
           example: "avatars.yandex.net/get-music-misc/34161/rotor-genre-rusrock-icon/%%"
     Pager:
+      description: Meta data for pagination
       type: object
       properties:
         total:
@@ -3310,6 +3361,7 @@ components:
           description: Items per page
     CustomWave:
       type: object
+      description: TODO
       properties:
         title:
           type: string
