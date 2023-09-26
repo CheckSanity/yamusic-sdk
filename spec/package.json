@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format:verify": "prettier --list-different \"src/**/*.ts\""
+    "format:verify": "prettier --list-different \"src/**/*.tsx\""
   },
   "dependencies": {
     "core-js": "^3.32.2",
@@ -24,6 +24,7 @@
     "@types/react-dom": "^18.2.7",
     "eslint": "^8.50.0",
     "eslint-config-next": "^13.5.3",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   }
 }

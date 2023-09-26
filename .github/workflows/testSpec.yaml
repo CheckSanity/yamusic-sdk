@@ -1,4 +1,4 @@
-name: Test the application
+name: Test the OpenAPI specification
 
 on:
   pull_request:

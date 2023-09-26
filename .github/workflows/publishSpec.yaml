@@ -1,4 +1,4 @@
-name: Publish spec package
+name: Publish spec package to GitHub packages
 
 on:
   push:
