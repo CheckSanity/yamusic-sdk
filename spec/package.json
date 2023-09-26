@@ -30,5 +30,18 @@
     "prettier": "^3.0.3",
     "sass": "^1.68.0",
     "typescript": "^5.2.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "next/core-web-vitals",
+      "prettier"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "useTabs": false
   }
 }
