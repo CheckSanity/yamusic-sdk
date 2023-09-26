@@ -6,6 +6,9 @@ on:
       - stable
     paths:
       - spec/**
+defaults:
+  run:
+    working-directory: ./spec
 
 jobs:
   build:
@@ -19,14 +22,10 @@ jobs:
           node-version: '19.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
-        working-directory: ./spec
         run: npm install
       - name: Run Prettier
-        working-directory: ./spec
         run: npm run format:verify
       - name: Run ESLint
-        working-directory: ./spec
         run: npm run lint
       - name: Run build
-        working-directory: ./spec
         run: num run build
