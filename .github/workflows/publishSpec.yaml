@@ -2,19 +2,26 @@ name: Publish spec package to GitHub packages
 
 on:
   push:
-    branches: [ 'stable' ]
+    branches: [ 'stable', 'test' ]
     paths:
       - spec/**
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: yamusic-openapi-spec
+  IMAGE_NAME: yamusic-docs
 
 jobs:
   build-and-push-image:
     name: Build and push Docker image to Github Packages
 
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./spec/Dockerfile
+            image: ${{REGISTRY}}/${{github.actor}}/${{IMAGE_NAME}}
 
     permissions: write-all
 
@@ -33,12 +40,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ matrix.image }}
+
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./spec
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
