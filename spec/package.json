@@ -1,35 +1,33 @@
 {
   "name": "@checksanity/yamusic-spec",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "prepare": "husky install",
     "format:verify": "prettier --list-different \"src/**/*.{js,ts,jsx,tsx,html,vue}\""
   },
   "dependencies": {
-    "core-js": "^3.32.2",
-    "mobx": "^6.10.2",
-    "next": "^13.5.3",
+    "@stoplight/elements": "^8.0.2",
+    "next": "^14.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "redoc": "^2.0.0",
-    "styled-components": "^6.0.8"
+    "sass": "^1.70.0"
   },
   "devDependencies": {
-    "@types/node": "^20.7.0",
-    "@types/react": "^18.2.23",
-    "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
-    "eslint": "^8.50.0",
-    "eslint-config-next": "^13.5.3",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.3",
-    "sass": "^1.68.0",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.11.13",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.7",
+    "lint-staged": "^15.2.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +41,18 @@
     "singleQuote": true,
     "tabWidth": 2,
     "useTabs": false
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{js,ts}": [
+      "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    ],
+    "**/*.{js,ts,json}": [
+      "prettier --write"
+    ]
   }
 }
