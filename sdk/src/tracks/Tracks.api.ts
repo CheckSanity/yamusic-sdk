@@ -7,23 +7,31 @@ import {
 } from './Track.types';
 
 export class TracksApi extends BaseApi {
-  public track(uid: number): Promise<Track> {
-    return this.getRequest<Track>(`tracks/${uid}`);
+  public track(args: { uid: number | string }): Promise<Track> {
+    return this.getRequest<Track>(`tracks/${args.uid}`);
   }
 
-  public tracks(uid: number[]): Promise<Track[]> {
-    return this.getRequest<Track[]>(`tracks?trackIds=${uid}`);
+  public tracks(args: { uid: (number | string)[] }): Promise<Track[]> {
+    return this.getRequest<Track[]>(`tracks`, {
+      query: {
+        trackIds: args.uid.toString(),
+      },
+    });
   }
 
-  public similar(uid: number): Promise<SimilarTracks> {
-    return this.getRequest<SimilarTracks>(`tracks/${uid}/similar`);
+  public similar(args: { uid: number | string }): Promise<SimilarTracks> {
+    return this.getRequest<SimilarTracks>(`tracks/${args.uid}/similar`);
   }
 
-  public supplement(uid: number): Promise<TrackSupplement> {
-    return this.getRequest<TrackSupplement>(`tracks/${uid}/supplement`);
+  public supplement(args: { uid: number | string }): Promise<TrackSupplement> {
+    return this.getRequest<TrackSupplement>(`tracks/${args.uid}/supplement`);
   }
 
-  public downloadInfo(uid: number): Promise<TrackDownloadInfo[]> {
-    return this.getRequest<TrackDownloadInfo[]>(`tracks/${uid}/download-info`);
+  public downloadInfo(args: {
+    uid: number | string;
+  }): Promise<TrackDownloadInfo[]> {
+    return this.getRequest<TrackDownloadInfo[]>(
+      `tracks/${args.uid}/download-info`,
+    );
   }
 }

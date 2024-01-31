@@ -1,6 +1,5 @@
 import { BaseApi } from '../BaseApi';
 import { Search, SearchSuggest, SearchType } from './Search.types';
-import * as querystring from 'querystring';
 
 export class SearchApi extends BaseApi {
   public search(args: {
@@ -10,10 +9,22 @@ export class SearchApi extends BaseApi {
     nocorrect?: boolean;
     playlistInBest?: boolean;
   }): Promise<Search> {
-    return this.getRequest<Search>(`search?${querystring.stringify(args)}`);
+    return this.getRequest<Search>(`search`, {
+      query: {
+        text: args.text,
+        page: args.page,
+        type: args.type,
+        nocorrect: args.nocorrect,
+        playlistInBest: args.playlistInBest,
+      },
+    });
   }
 
   public searchSuggest(part: string): Promise<SearchSuggest> {
-    return this.getRequest<SearchSuggest>(`search/suggest?part=${part}`);
+    return this.getRequest<SearchSuggest>(`search/suggest`, {
+      query: {
+        part: part,
+      },
+    });
   }
 }

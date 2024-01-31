@@ -7,68 +7,76 @@ import {
 } from './Playlists.types';
 
 export class PlaylistsApi extends BaseApi {
-  public createPlaylist(
-    uid: number | string,
-    title: string,
-    visibility: PlaylistVisibility,
-  ) {
+  public createPlaylist(args: {
+    login: number | string;
+    title: string;
+    visibility: PlaylistVisibility;
+  }) {
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('visibility', visibility);
+    formData.append('title', args.title);
+    formData.append('visibility', args.visibility);
 
-    return this.postRequest<Playlist>(`users/${uid}/playlists/create`, {
+    return this.postRequest<Playlist>(`users/${args.login}/playlists/create`, {
       formData: formData,
     });
   }
 
-  public deletePlaylist(uid: number | string, kind: number): Promise<string> {
-    return this.postRequest(`users/${uid}/playlists/${kind}/delete`);
+  public deletePlaylist(args: {
+    login: number | string;
+    kind: number | string;
+  }): Promise<string> {
+    return this.postRequest(
+      `users/${args.login}/playlists/${args.kind}/delete`,
+    );
   }
 
-  public updatePlaylistName(
-    uid: number | string,
-    kind: number,
-    newName: string,
-  ): Promise<Playlist> {
+  public updatePlaylistName(args: {
+    login: number | string;
+    kind: number | string;
+    newName: string;
+  }): Promise<Playlist> {
     const formData = new FormData();
-    formData.append('value', newName);
-
-    return this.postRequest<Playlist>(`users/${uid}/playlists/${kind}/name`, {
-      formData: formData,
-    });
-  }
-
-  public updatePlaylistVisibility(
-    uid: number | string,
-    kind: number,
-    newVisibility: PlaylistVisibility,
-  ): Promise<Playlist> {
-    const formData = new FormData();
-    formData.append('value', newVisibility);
+    formData.append('value', args.newName);
 
     return this.postRequest<Playlist>(
-      `users/${uid}/playlists/${kind}/visibility`,
+      `users/${args.login}/playlists/${args.kind}/name`,
       {
         formData: formData,
       },
     );
   }
 
-  public playlist(
-    uid: number | string,
-    kind: number,
-  ): Promise<PlaylistWithTracks> {
-    return this.getRequest<PlaylistWithTracks>(
-      `users/${uid}/playlists/${kind}`,
+  public updatePlaylistVisibility(args: {
+    login: number | string;
+    kind: number | string;
+    newVisibility: PlaylistVisibility;
+  }): Promise<Playlist> {
+    const formData = new FormData();
+    formData.append('value', args.newVisibility);
+
+    return this.postRequest<Playlist>(
+      `users/${args.login}/playlists/${args.kind}/visibility`,
+      {
+        formData: formData,
+      },
     );
   }
 
-  public recommendations(
-    uid: number | string,
-    kind: number,
-  ): Promise<PlaylistRecommendations> {
+  public playlist(args: {
+    login: number | string;
+    kind: number | string;
+  }): Promise<PlaylistWithTracks> {
+    return this.getRequest<PlaylistWithTracks>(
+      `users/${args.login}/playlists/${args.kind}`,
+    );
+  }
+
+  public recommendations(args: {
+    login: number | string;
+    kind: number | string;
+  }): Promise<PlaylistRecommendations> {
     return this.getRequest<PlaylistRecommendations>(
-      `users/${uid}/playlists/${kind}/recommendations`,
+      `users/${args.login}/playlists/${args.kind}/recommendations`,
     );
   }
 }
