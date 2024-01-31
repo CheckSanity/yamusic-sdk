@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import StyledComponentsRegistry from '@/lib/registry'
 import React from 'react'
 
 export const metadata: Metadata = {
@@ -14,9 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
