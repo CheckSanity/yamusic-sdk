@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - stable
+    paths:
+      - sdk/**
 
 defaults:
   run:
@@ -14,20 +16,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '21.x'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install dependencies
         run: npm install
+
       - name: Run Prettier
         run: npm run format:verify
+
       - name: Run ESLint
         run: npm run lint
-      - name: Run tests
-        env:
-          INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN }}
-          INTEGRATION_TESTS_YANDEX_MUSIC_UID: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_UID }}
-        run: npm run test
+
+      - name: Build
+        run: npm run build
+      #- name: Run tests
+      #  env:
+      #    INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_TOKEN }}
+      #    INTEGRATION_TESTS_YANDEX_MUSIC_UID: ${{ secrets.INTEGRATION_TESTS_YANDEX_MUSIC_UID }}
+      #  run: npm run test

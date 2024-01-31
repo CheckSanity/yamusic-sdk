@@ -46,6 +46,8 @@ export type User = {
    * Statistics
    */
   statistics?: UserStatistics;
+
+  // TODO socialProfiles[]
 };
 
 export type UserStatistics = {
@@ -78,8 +80,6 @@ export type UserStatistics = {
    * // TODO ???
    */
   ugcTracks: number;
-
-  // TODO socialProfiles[]
 };
 
 export type UserPlaylist = Playlist;

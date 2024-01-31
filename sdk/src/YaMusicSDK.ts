@@ -9,6 +9,7 @@ import { UsersApi } from './users/Users.api';
 import { SearchApi } from './search/Search.api';
 import { GenresApi } from './genres/Genres.api';
 import { FeedApi } from './feed/Feed.api';
+import querystring from 'querystring';
 
 export type * from './account/Account.types';
 export type * from './albums/Albums.types';
@@ -63,13 +64,26 @@ export class YaMusicSDK {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     url: string,
     args?: {
+      query?: NodeJS.Dict<
+        | string
+        | number
+        | boolean
+        | readonly string[]
+        | readonly number[]
+        | readonly boolean[]
+        | null
+      >;
       formData?: FormData;
       body?: unknown;
       contentType?: string;
     },
   ): Promise<R> {
     const token = this.configuration.token;
-    const fullUrl = this.configuration.url + url;
+    let fullUrl = this.configuration.url + url;
+
+    if (args?.query !== undefined) {
+      fullUrl += `?${querystring.stringify(args.query)}`;
+    }
 
     const opts: RequestInit = {
       method: method,
