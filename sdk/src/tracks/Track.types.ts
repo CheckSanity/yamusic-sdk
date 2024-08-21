@@ -6,6 +6,7 @@ export type Track = {
   id: number | string;
   realId?: number | string;
   title: string;
+  version?: string;
   contentWarning?: string;
   trackSource: TrackSource;
   major?: TrackMajor;
@@ -26,11 +27,22 @@ export type Track = {
   ogImage?: string;
   lyricsAvailable?: boolean;
   lyricsInfo?: TrackLyricsInfo;
+  derivedColors?: DerivedColors;
   type: TrackType;
   rememberPosition?: boolean;
+  backgroundVideoUri?: string;
   trackSharingFlag?: TrackSharingFlag;
+  playerId?: string;
+  specialAudioResources?: string[];
   error?: string;
   regions?: Region[];
+};
+
+export type DerivedColors = {
+  average: string;
+  waveText: string;
+  miniPlayer: string;
+  accent: string;
 };
 
 export type SimilarTracks = {

@@ -1,5 +1,5 @@
 export type Cover = {
-  type?: string;
+  type?: 'from-artist-photos' | string; //
   prefix?: string;
   dir?: string; // Exist when type="pic"
   itemsUri?: string[]; // Exist when type mosaic
@@ -14,6 +14,7 @@ export type CustomWave = {
   animationUrl: string;
   position: string;
   header: string;
+  backgroundImageUrl?: string;
 };
 
 export type Pager = {
