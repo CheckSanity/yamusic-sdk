@@ -12,11 +12,12 @@ export type Artist = {
   id: number;
   name: string;
   various?: boolean;
-  composer?: boolean;
+  available?: boolean;
   cover?: Cover;
   genres?: string[];
-  counts: ArtistCounts;
   disclaimers?: string[];
+  composer?: boolean;
+  counts?: ArtistCounts;
   dbAliases?: string[];
   likesCount?: number;
   error?: string;

@@ -1,10 +1,8 @@
 # Yandex.Music API SDK - TypeScript
 
-This is an unofficial JavaScript/TypeScript SDK for
-the [Yandex.Music](https://music.yandex.ru/).
+This is an unofficial JavaScript/TypeScript SDK for the [Yandex.Music](https://music.yandex.ru/).
 
-Current OpenAPI specification can be found
-here: [yamusicdocs.voir.dev](https://yamusicdocs.voir.dev)
+Current OpenAPI specification can be found here: [yamusicdocs.voir.dev](https://yamusicdocs.voir.dev)
 
 ## Requirements
 
@@ -57,7 +55,7 @@ console.table(status.account);
 
 ### Extensibility
 
-All of the constructors support a configuration object that lets you override the default behavior
+All the constructors support a configuration object that lets you override the default behavior
 of the SDK.
 
 ```ts

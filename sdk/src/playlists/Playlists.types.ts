@@ -1,4 +1,10 @@
-import { Cover, CustomWave, Region, UserInfo } from '../common/Common.types';
+import {
+  Cover,
+  CustomWave,
+  Pager,
+  Region,
+  UserInfo,
+} from '../common/Common.types';
 import { Track } from '../tracks/Track.types';
 
 export type Playlist = {
@@ -38,7 +44,10 @@ export type Playlist = {
   backgroundVideoUrl?: string;
   backgroundImageUrl?: string;
   likesCount?: number;
+  lastOwnerPlaylists?: Playlist[];
   customWave?: CustomWave;
+  hasTrailer?: boolean;
+  pager?: Pager;
   regions?: Region[];
 };
 
@@ -81,6 +90,8 @@ export type PlaylistTrack = {
    * Track original index
    */
   originalIndex: number;
+
+  originalShuffleIndex?: number;
 
   /**
    * Is recent?

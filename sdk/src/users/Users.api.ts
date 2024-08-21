@@ -7,48 +7,72 @@ import {
   UserLikedTracks,
   UserPlaylist,
 } from './User.types';
-import { PlaylistWithTrackIds } from '../playlists/Playlists.types';
+import {
+  PlaylistWithTrackIds,
+  PlaylistWithTracks,
+} from '../playlists/Playlists.types';
 
 export class UsersApi extends BaseApi {
-  public info(args: { login: string }): Promise<User> {
-    return this.getRequest<User>(`users/${args.login}`);
+  public info(args: { loginOrId: string | number }): Promise<User> {
+    return this.getRequest<User>(`users/${args.loginOrId}`);
   }
 
-  public playlists(args: { login: string }): Promise<UserPlaylist[]> {
+  public playlists(args: {
+    loginOrId: string | number;
+  }): Promise<UserPlaylist[]> {
     return this.getRequest<UserPlaylist[]>(
-      `users/${args.login}/playlists/list`,
+      `users/${args.loginOrId}/playlists/list`,
+    );
+  }
+
+  public playlist(args: {
+    loginOrId: number | string;
+    kind: number | string;
+  }): Promise<PlaylistWithTracks> {
+    return this.getRequest<PlaylistWithTracks>(
+      `users/${args.loginOrId}/playlists/${args.kind}`,
     );
   }
 
   public playlistsByIds(args: {
-    login: string;
-    playlistIds: string[];
+    loginOrId: string | number;
+    kinds: (number | string)[];
   }): Promise<PlaylistWithTrackIds[]> {
     return this.getRequest<PlaylistWithTrackIds[]>(
-      `users/${args.login}/playlists`,
-      { query: { kinds: args.playlistIds.toString() } },
+      `users/${args.loginOrId}/playlists`,
+      { query: { kinds: args.kinds.toString() } },
     );
   }
 
-  public likedPlaylists(args: { login: string }): Promise<UserLikedPlaylist[]> {
+  public likedPlaylists(args: {
+    loginOrId: string | number;
+  }): Promise<UserLikedPlaylist[]> {
     return this.getRequest<UserLikedPlaylist[]>(
-      `users/${args.login}/likes/playlist`,
+      `users/${args.loginOrId}/likes/playlist`,
     );
   }
 
-  public likedArtists(args: { login: string }): Promise<UserLikedArtist[]> {
+  public likedArtists(args: {
+    loginOrId: string | number;
+  }): Promise<UserLikedArtist[]> {
     return this.getRequest<UserLikedArtist[]>(
-      `users/${args.login}/likes/artists`,
+      `users/${args.loginOrId}/likes/artists`,
     );
   }
 
-  public likedAlbums(args: { login: string }): Promise<UserLikedAlbum[]> {
+  public likedAlbums(args: {
+    loginOrId: string | number;
+  }): Promise<UserLikedAlbum[]> {
     return this.getRequest<UserLikedAlbum[]>(
-      `users/${args.login}/likes/albums`,
+      `users/${args.loginOrId}/likes/albums`,
     );
   }
 
-  public likedTracks(args: { login: string }): Promise<UserLikedTracks> {
-    return this.getRequest<UserLikedTracks>(`users/${args.login}/likes/tracks`);
+  public likedTracks(args: {
+    loginOrId: string | number;
+  }): Promise<UserLikedTracks> {
+    return this.getRequest<UserLikedTracks>(
+      `users/${args.loginOrId}/likes/tracks`,
+    );
   }
 }
