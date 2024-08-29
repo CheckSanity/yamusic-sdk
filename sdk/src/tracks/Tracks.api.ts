@@ -7,11 +7,11 @@ import {
 } from './Track.types';
 
 export class TracksApi extends BaseApi {
-  public track(args: { uid: number | string }): Promise<Track> {
-    return this.getRequest<Track>(`tracks/${args.uid}`);
+  public async track(args: { uid: number | string }): Promise<Track> {
+    return (await this.getRequest<Track[]>(`tracks/${args.uid}`))[0];
   }
 
-  public tracks(args: { uid: (number | string)[] }): Promise<Track[]> {
+  public async tracks(args: { uid: (number | string)[] }): Promise<Track[]> {
     return this.getRequest<Track[]>(`tracks`, {
       query: {
         trackIds: args.uid.toString(),
@@ -19,15 +19,17 @@ export class TracksApi extends BaseApi {
     });
   }
 
-  public similar(args: { uid: number | string }): Promise<SimilarTracks> {
+  public async similar(args: { uid: number | string }): Promise<SimilarTracks> {
     return this.getRequest<SimilarTracks>(`tracks/${args.uid}/similar`);
   }
 
-  public supplement(args: { uid: number | string }): Promise<TrackSupplement> {
+  public async supplement(args: {
+    uid: number | string;
+  }): Promise<TrackSupplement> {
     return this.getRequest<TrackSupplement>(`tracks/${args.uid}/supplement`);
   }
 
-  public downloadInfo(args: {
+  public async downloadInfo(args: {
     uid: number | string;
   }): Promise<TrackDownloadInfo[]> {
     return this.getRequest<TrackDownloadInfo[]>(

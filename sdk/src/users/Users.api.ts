@@ -13,11 +13,11 @@ import {
 } from '../playlists/Playlists.types';
 
 export class UsersApi extends BaseApi {
-  public info(args: { loginOrId: string | number }): Promise<User> {
+  public async info(args: { loginOrId: string | number }): Promise<User> {
     return this.getRequest<User>(`users/${args.loginOrId}`);
   }
 
-  public playlists(args: {
+  public async playlists(args: {
     loginOrId: string | number;
   }): Promise<UserPlaylist[]> {
     return this.getRequest<UserPlaylist[]>(
@@ -25,7 +25,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public playlist(args: {
+  public async playlist(args: {
     loginOrId: number | string;
     kind: number | string;
   }): Promise<PlaylistWithTracks> {
@@ -34,7 +34,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public playlistsByIds(args: {
+  public async playlistsByIds(args: {
     loginOrId: string | number;
     kinds: (number | string)[];
   }): Promise<PlaylistWithTrackIds[]> {
@@ -44,7 +44,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public likedPlaylists(args: {
+  public async likedPlaylists(args: {
     loginOrId: string | number;
   }): Promise<UserLikedPlaylist[]> {
     return this.getRequest<UserLikedPlaylist[]>(
@@ -52,7 +52,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public likedArtists(args: {
+  public async likedArtists(args: {
     loginOrId: string | number;
   }): Promise<UserLikedArtist[]> {
     return this.getRequest<UserLikedArtist[]>(
@@ -60,7 +60,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public likedAlbums(args: {
+  public async likedAlbums(args: {
     loginOrId: string | number;
   }): Promise<UserLikedAlbum[]> {
     return this.getRequest<UserLikedAlbum[]>(
@@ -68,7 +68,7 @@ export class UsersApi extends BaseApi {
     );
   }
 
-  public likedTracks(args: {
+  public async likedTracks(args: {
     loginOrId: string | number;
   }): Promise<UserLikedTracks> {
     return this.getRequest<UserLikedTracks>(
