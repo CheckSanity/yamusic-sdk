@@ -2,7 +2,7 @@ import { BaseApi } from '../BaseApi';
 import { Search, SearchSuggest, SearchType } from './Search.types';
 
 export class SearchApi extends BaseApi {
-  public search(args: {
+  public async search(args: {
     text: string;
     page: number;
     type: SearchType;
@@ -20,7 +20,7 @@ export class SearchApi extends BaseApi {
     });
   }
 
-  public searchSuggest(part: string): Promise<SearchSuggest> {
+  public async searchSuggest(part: string): Promise<SearchSuggest> {
     return this.getRequest<SearchSuggest>(`search/suggest`, {
       query: {
         part: part,

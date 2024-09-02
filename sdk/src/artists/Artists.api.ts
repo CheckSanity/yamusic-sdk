@@ -7,11 +7,11 @@ import {
 } from './Artists.types';
 
 export class ArtistsApi extends BaseApi {
-  public artist(args: { uid: number | string }): Promise<ArtistResponse> {
+  public async artist(args: { uid: number | string }): Promise<ArtistResponse> {
     return this.getRequest<ArtistResponse>(`artists/${args.uid}`);
   }
 
-  public artists(args: {
+  public async artists(args: {
     uid: (number | string)[];
   }): Promise<ArtistDetailed[]> {
     return this.getRequest<ArtistDetailed[]>(`artists`, {
@@ -21,7 +21,7 @@ export class ArtistsApi extends BaseApi {
     });
   }
 
-  public artistTracks(args: {
+  public async artistTracks(args: {
     uid: number | string;
     page?: number;
     pageSize?: number;
@@ -34,7 +34,7 @@ export class ArtistsApi extends BaseApi {
     });
   }
 
-  public artistAlbums(args: {
+  public async artistAlbums(args: {
     uid: number | string;
     page?: number;
     pageSize?: number;

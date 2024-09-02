@@ -7,7 +7,7 @@ import {
 } from './Playlists.types';
 
 export class PlaylistsApi extends BaseApi {
-  public createPlaylist(args: {
+  public async createPlaylist(args: {
     loginOrId: string | number;
     title: string;
     visibility: PlaylistVisibility;
@@ -24,7 +24,7 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public deletePlaylist(args: {
+  public async deletePlaylist(args: {
     loginOrId: string | number;
     kind: number | string;
   }): Promise<string> {
@@ -33,7 +33,7 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public updatePlaylistName(args: {
+  public async updatePlaylistName(args: {
     loginOrId: string | number;
     kind: number | string;
     newName: string;
@@ -49,7 +49,7 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public updatePlaylistVisibility(args: {
+  public async updatePlaylistVisibility(args: {
     loginOrId: string | number;
     kind: number | string;
     newVisibility: PlaylistVisibility;
@@ -65,7 +65,7 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public playlist(args: {
+  public async playlist(args: {
     loginOrId: string | number;
     kind: number | string;
   }): Promise<PlaylistWithTracks> {
@@ -74,7 +74,7 @@ export class PlaylistsApi extends BaseApi {
     );
   }
 
-  public recommendations(args: {
+  public async recommendations(args: {
     loginOrId: string | number;
     kind: number | string;
   }): Promise<PlaylistRecommendations> {
